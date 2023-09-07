@@ -25,21 +25,21 @@ import java.util.stream.Collectors;
 @Slf4j
 public class StatClient {
     private final String appName;
-    private final String serverUrl;
+    private final String url;
     private final HttpClient httpClient;
-    private final ObjectMapper json;
+    private final ObjectMapper objectMapper;
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public StatClient(@Value("$spring.application.name") String appName,
-                      @Value("${stat-server.url}") String serverUrl,
-                      ObjectMapper json) {
+                      @Value("${stat-server.url}") String url,
+                      ObjectMapper objectMapper) {
         this.appName = appName;
-        this.serverUrl = serverUrl;
+        this.url = url;
         this.httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(2)).build();
-        this.json = json;
+        this.objectMapper = objectMapper;
     }
 
-    public void newStatRecord(String uri, String ip, LocalDateTime timestamp) {
+    public void newStat(String uri, String ip, LocalDateTime timestamp) {
         StatRecordCreateDto statRecordCreateDto = StatRecordCreateDto.builder()
                 .app(appName)
                 .uri(uri)
@@ -49,20 +49,20 @@ public class StatClient {
 
         try {
             HttpRequest request = HttpRequest.newBuilder()
-                    .POST(HttpRequest.BodyPublishers.ofString(json.writeValueAsString(statRecordCreateDto)))
-                    .uri(URI.create(serverUrl + "/hit"))
+                    .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(statRecordCreateDto)))
+                    .uri(URI.create(url + "/hit"))
                     .header(HttpHeaders.CONTENT_TYPE, "application/json")
                     .header(HttpHeaders.ACCEPT, "application/json")
                     .build();
 
             HttpResponse<Void> response = httpClient.send(request, HttpResponse.BodyHandlers.discarding());
             if (response.statusCode() == HttpStatus.CREATED.value()) {
-                log.info("New stat record success: {}", statRecordCreateDto);
+                log.info("Новая запись успешно создана: {}", statRecordCreateDto);
             } else {
-                log.warn("New stat record failed: {}", statRecordCreateDto);
+                log.warn("Новая запись не может быть создана: {}", statRecordCreateDto);
             }
         } catch (Exception e) {
-            log.warn("New stat record exception: " + e.getMessage() + ", data: {}", statRecordCreateDto);
+            log.warn("При создании новой записи возникла ошибка: " + e.getMessage() + ", дата: {}", statRecordCreateDto);
         }
     }
 
@@ -77,16 +77,16 @@ public class StatClient {
             String queryString = parameters.entrySet().stream().map(e -> e.getKey() + "=" + e.getValue()).collect(Collectors.joining("&"));
             HttpRequest request = HttpRequest.newBuilder()
                     .GET()
-                    .uri(URI.create(serverUrl + "/stats?" + queryString))
+                    .uri(URI.create(url + "/stats?" + queryString))
                     .header(HttpHeaders.ACCEPT, "application/json")
                     .build();
 
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == HttpStatus.OK.value()) {
-                List<ViewStatsDto> statsList = json.readValue(response.body(), new TypeReference<>() {
+                List<ViewStatsDto> statsList = objectMapper.readValue(response.body(), new TypeReference<>() {
                 });
 
-                log.info("Stats received for: {} - {}, {}, {}. Received {} records",
+                log.info("Статистика, полученная за: {} - {}, {}, {}.Получены {} записи",
                         start,
                         end,
                         uris != null ? String.join(",", uris) : "null",
@@ -95,14 +95,14 @@ public class StatClient {
 
                 return statsList;
             } else {
-                log.warn("Stats receive failed for: {} - {}, {}, {}",
+                log.warn("Не удалось получить статистику для: {} - {}, {}, {}",
                         start,
                         end,
                         uris != null ? String.join(",", uris) : "null",
                         unique != null ? unique.toString() : "null");
             }
         } catch (Exception e) {
-            log.warn("Stats receive failed because exception for: {} - {}, {}, {}. Exception message: " + e.getMessage(),
+            log.warn("Не удалось получить статистику для : {} - {}, {}, {}. Произошла ошибка: " + e.getMessage(),
                     start,
                     end,
                     uris != null ? String.join(",", uris) : "null",

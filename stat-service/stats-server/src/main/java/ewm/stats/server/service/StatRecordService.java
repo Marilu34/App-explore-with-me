@@ -1,7 +1,7 @@
 package ewm.stats.server.service;
 
 import ewm.stats.server.model.StatRecord;
-import ewm.stats.server.model.dto.StatRecordCreateDtoMapper;
+import ewm.stats.server.model.dto.StatDtoMapper;
 import ewm.stats.server.repository.StatRecordRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ public class StatRecordService {
     private final StatRecordRepository statRecordRepository;
 
     public StatRecord newStatRecord(StatRecordCreateDto statRecordCreateDto) {
-        StatRecord statRecord = StatRecordCreateDtoMapper.toStatRecord(statRecordCreateDto);
+        StatRecord statRecord = StatDtoMapper.toStat(statRecordCreateDto);
         return statRecordRepository.save(statRecord);
     }
 

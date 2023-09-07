@@ -26,7 +26,7 @@ public class Controller {
     @PostMapping("/hit")
     @ResponseStatus(HttpStatus.CREATED)
     public void postStatRecord(@RequestBody @Valid StatRecordCreateDto statRecordCreateDto) {
-        log.info("New hit: {}", statRecordCreateDto);
+        log.info("Новый hit: {}", statRecordCreateDto);
         statRecordService.newStatRecord(statRecordCreateDto);
     }
 

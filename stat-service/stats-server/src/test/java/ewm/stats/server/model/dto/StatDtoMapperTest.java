@@ -10,7 +10,7 @@ import java.time.temporal.ChronoUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class StatRecordCreateDtoMapperTest {
+class StatDtoMapperTest {
 
     @Test
     void toStatRecord() {
@@ -28,7 +28,7 @@ class StatRecordCreateDtoMapperTest {
                 .timestamp(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS))
                 .build();
 
-        StatRecord mappedStatRecord = StatRecordCreateDtoMapper.toStatRecord(statRecordCreateDto);
+        StatRecord mappedStatRecord = StatDtoMapper.toStat(statRecordCreateDto);
         assertEquals(statRecord, mappedStatRecord);
     }
 }

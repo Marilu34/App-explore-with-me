@@ -9,8 +9,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class StatRecordCreateDtoMapper {
-    public static StatRecord toStatRecord(StatRecordCreateDto statRecordCreateDto) {
+public final class StatDtoMapper {
+    public static StatRecord toStat(StatRecordCreateDto statRecordCreateDto) {
         if (statRecordCreateDto != null) {
             return StatRecord.builder()
                     .appName(statRecordCreateDto.getApp())
