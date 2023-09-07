@@ -7,7 +7,7 @@
 		<module>service/dto</module>
 		<module>service/server</module>
 		<module>service/client</module>
-		<module>service</module>
+		<module>ewm-main-service</module>
 	</modules>
 
 	<parent>
