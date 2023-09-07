@@ -3,11 +3,11 @@
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<modules>
-		<module>service</module>
-		<module>service/dto</module>
-		<module>service/server</module>
-		<module>service/client</module>
-		<module>ewm-main-service</module>
+		<module>stats-server</module>
+		<module>stats-server/dto</module>
+		<module>stats-server/server</module>
+		<module>stats-server/client</module>
+		<module>ewm-service</module>
 	</modules>
 
 	<parent>
