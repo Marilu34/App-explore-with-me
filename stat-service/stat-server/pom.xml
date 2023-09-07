@@ -10,7 +10,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>server</artifactId>
+    <artifactId>stat-server</artifactId>
     <dependencies>
         <dependency>
             <groupId>ru.practicum</groupId>
