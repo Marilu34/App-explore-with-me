@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import ewm.stats.dto.StatRecordCreateDto;
 import ewm.stats.dto.ViewStatsDto;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -21,6 +22,8 @@ public class StatRecordService {
         return statRecordRepository.save(statRecord);
     }
 
+
+    @Transactional
     public List<ViewStatsDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
         if (uris.isEmpty()) {
             if (!unique) {

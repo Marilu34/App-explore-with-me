@@ -21,7 +21,7 @@ import java.util.List;
 @Validated
 public class Controller {
     private final StatRecordService statRecordService;
-    private static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    public static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     @PostMapping("/hit")
     @ResponseStatus(HttpStatus.CREATED)
