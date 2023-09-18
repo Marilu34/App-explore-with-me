@@ -21,7 +21,7 @@ public class UserService {
         try {
             storageUser = userRepository.save(user);
         } catch (DataIntegrityViolationException e) {
-            throw new UserException("E-mail не уникален");
+            throw new UserException("E-mail уже существует");
         }
 
         return storageUser;

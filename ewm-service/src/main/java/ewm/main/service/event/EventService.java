@@ -88,7 +88,7 @@ public class EventService {
         }
         if (updateRequest.getStateAction() != null && "REJECT_EVENT".equals(updateRequest.getStateAction())) {
             if (storageEvent.getState() != State.PENDING) {
-                throw new EventException("Cannot cancel the event because it's not in the right state: " + storageEvent.getState().toString());
+                throw new EventException("Не удается опубликовать событие, потому что оно находится в неправильном состоянии: " + storageEvent.getState().toString());
             } else {
                 storageEvent.setState(State.CANCELED);
             }
@@ -96,7 +96,7 @@ public class EventService {
 
         if (updateRequest.getStateAction() != null && "PUBLISH_EVENT".equals(updateRequest.getStateAction())) {
             if (storageEvent.getState() != State.PENDING) {
-                throw new EventException("Cannot publish the event because it's not in the right state: " + storageEvent.getState().toString());
+                throw new EventException("Не удается опубликовать событие, потому что оно находится в неправильном состоянии: " + storageEvent.getState().toString());
             } else {
                 storageEvent.setState(State.PUBLISHED);
                 storageEvent.setPublishedOn(LocalDateTime.now());
