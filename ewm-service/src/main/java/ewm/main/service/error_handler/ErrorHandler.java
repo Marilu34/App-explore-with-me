@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
 import javax.persistence.EntityNotFoundException;
 import javax.validation.ValidationException;
 import java.time.LocalDateTime;
@@ -40,11 +41,9 @@ public class ErrorHandler {
                 .timestamp(LocalDateTime.now().format(EwmConstants.DATE_TIME_FORMATTER))
                 .build();
     }
-    @ExceptionHandler({CategoryException.class,
-            CompilationNotFoundException.class,
-            EventNotFoundException.class,
-            UserNotFoundException.class,
-            ParticipationRequestNotFoundException.class})
+
+    @ExceptionHandler({CategoryNotFoundException.class,
+            NotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotFoundException(final RuntimeException e) {
         log.info(e.getMessage());
@@ -56,16 +55,10 @@ public class ErrorHandler {
                 .build();
     }
 
-    @ExceptionHandler({CategoryHaveLinkedEventsException.class,
-            CategoryNameNotUniqueException.class,
-            EventUpdateException.class,
-            ParticipationRequestDuplicationException.class,
-            ParticipationRequestEventNotPublishedException.class,
-            ParticipationRequestInitiatorException.class,
-            ParticipationRequestInvalidStateException.class,
-            ParticipationRequestLimitException.class,
-            ParticipationRequestLimitReachedException.class,
-            UserEmailNotUniqueException.class})
+    @ExceptionHandler({CategoryException.class,
+            EventException.class,
+            ParticipationException.class,
+            UserException.class})
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleUserEmailNotUniqueException(final RuntimeException e) {
         log.info(e.getMessage());

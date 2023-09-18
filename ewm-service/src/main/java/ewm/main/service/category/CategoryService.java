@@ -2,9 +2,8 @@ package ewm.main.service.category;
 
 import ewm.main.service.category.model.Category;
 import ewm.main.service.event.EventService;
-import ewm.main.service.exceptions.CategoryHaveLinkedEventsException;
-import ewm.main.service.exceptions.CategoryNameNotUniqueException;
 import ewm.main.service.exceptions.CategoryException;
+import ewm.main.service.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
@@ -26,7 +25,7 @@ public class CategoryService {
         try {
             storageCategory = categoryRepository.save(category);
         } catch (DataIntegrityViolationException e) {
-            throw new CategoryNameNotUniqueException("Такая категория уже существует");
+            throw new CategoryException("Такая категория уже существует");
         }
 
         return storageCategory;
@@ -41,7 +40,7 @@ public class CategoryService {
         try {
             storageCategory = categoryRepository.save(category);
         } catch (DataIntegrityViolationException e) {
-            throw new CategoryNameNotUniqueException("Такая категория уже существует");
+            throw new CategoryException("Такая категория уже существует");
         }
 
         return storageCategory;
@@ -50,7 +49,7 @@ public class CategoryService {
     public Category getCategoryById(long categoryId) {
         Optional<Category> optionalCategory = categoryRepository.findById(categoryId);
         if (optionalCategory.isEmpty()) {
-            throw new CategoryException("Категория " + categoryId + " не обнаружена");
+            throw new NotFoundException("Категория " + categoryId + " не обнаружена");
         } else {
             return optionalCategory.get();
         }
@@ -63,7 +62,7 @@ public class CategoryService {
     public void delete(long categoryId) {
         Category category = getCategoryById(categoryId);
         if (eventService.getEventsCountByCategoryId(categoryId) > 0) {
-            throw new CategoryHaveLinkedEventsException("С категорией " + categoryId + " связаны события");
+            throw new CategoryException("С категорией " + categoryId + " связаны события");
         } else {
             categoryRepository.delete(category);
         }

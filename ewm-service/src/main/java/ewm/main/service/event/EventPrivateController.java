@@ -32,14 +32,14 @@ public class EventPrivateController {
     public EventDto createEvent(@Valid @RequestBody EventDtoUpdated eventDtoUpdated,
                                 @Positive @PathVariable long userId) {
         log.info("Создано новое событие {} для Пользователя с id = {}", eventDtoUpdated, userId);
-        return EventDtoMapper.toEventFullDto(eventService.createEvent(eventDtoUpdated, userId));
+        return EventDtoMapper.toEventDto(eventService.createEvent(eventDtoUpdated, userId));
     }
 
     @GetMapping("/{userId}/events/{eventId}")
     @ResponseStatus(HttpStatus.OK)
     public EventDto getEventByIdAndInitiatorId(@Positive @PathVariable long userId, @Positive @PathVariable long eventId) {
         log.info("Получено Событие: userId = {}, eventId = {}", userId, eventId);
-        return EventDtoMapper.toEventFullDto(eventService.getEventByIdAndInitiatorId(eventId, userId));
+        return EventDtoMapper.toEventDto(eventService.getEventByIdAndInitiatorId(eventId, userId));
     }
 
     @GetMapping("/{userId}/events")
@@ -57,7 +57,7 @@ public class EventPrivateController {
                                            @Positive @PathVariable long userId,
                                            @Positive @PathVariable long eventId) {
         log.info("Обновлено для Пользователя Событие : userId = {}, eventId = {}, {}", userId, eventId, eventUserRequest);
-        return EventDtoMapper.toEventFullDto(eventService.updateEventByInitiator(eventUserRequest, eventId, userId));
+        return EventDtoMapper.toEventDto(eventService.updateEventByInitiator(eventUserRequest, eventId, userId));
     }
 
 

@@ -2,8 +2,8 @@ package ewm.main.service.exceptions;
 
 //ожидаемый код 409 CONFLICT
 
-public class CategoryException extends RuntimeException {
-    public CategoryException(String message) {
+public class UserException extends RuntimeException {
+    public UserException(String message) {
         super(message);
     }
 }

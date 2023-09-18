@@ -32,7 +32,7 @@ public class EventAdminController {
     @ResponseStatus(HttpStatus.OK)
     public EventDto update(@RequestBody EventAdminRequest updateRequest, @Positive @PathVariable long eventId) {
         log.info("Администратор обновил событие: {}, eventId = {}", updateRequest, eventId);
-        return EventDtoMapper.toEventFullDto(eventService.updateEventByAdmin(updateRequest, eventId));
+        return EventDtoMapper.toEventDto(eventService.updateEventByAdmin(updateRequest, eventId));
     }
 
     @GetMapping
@@ -47,6 +47,6 @@ public class EventAdminController {
         log.info("Администратор получает все события: users = {}, states = {}, categories = {}, rangeStart = {}, rangeEnd = {}, from = {}, size = {}",
                 usersIdList, states, categoriesIdList, rangeStart, rangeEnd, from, size);
 
-        return EventDtoMapper.toEventFullDtoList(eventService.getAllEventsAdmin(usersIdList, states, categoriesIdList, rangeStart, rangeEnd, from, size));
+        return EventDtoMapper.toEventDtoList(eventService.getAllEventsAdmin(usersIdList, states, categoriesIdList, rangeStart, rangeEnd, from, size));
     }
 }

@@ -7,8 +7,8 @@ import ewm.main.service.event.model.Event;
 import ewm.main.service.event.model.dto.EventDtoUpdated;
 import ewm.main.service.event.model.dto.EventAdminRequest;
 import ewm.main.service.event.model.dto.EventUserRequest;
-import ewm.main.service.exceptions.EventNotFoundException;
-import ewm.main.service.exceptions.EventUpdateException;
+import ewm.main.service.exceptions.NotFoundException;
+import ewm.main.service.exceptions.EventException;
 import ewm.main.service.user.UserService;
 import ewm.stats.client.StatClient;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +30,7 @@ public class EventService {
 
     public Event createEvent(EventDtoUpdated eventDtoUpdated, long userId) {
         if (LocalDateTime.parse(eventDtoUpdated.getEventDate(), EwmConstants.DATE_TIME_FORMATTER).isBefore(LocalDateTime.now().plusHours(2))) {
-            throw new EventUpdateException("Дата начала изменяемого события должна быть не ранее чем за два часа от даты публикации");
+            throw new EventException("Дата начала изменяемого события должна быть не ранее чем за два часа от даты публикации");
         }
 
         Event event = Event.builder()
@@ -88,7 +88,7 @@ public class EventService {
         }
         if (updateRequest.getStateAction() != null && "REJECT_EVENT".equals(updateRequest.getStateAction())) {
             if (storageEvent.getState() != State.PENDING) {
-                throw new EventUpdateException("Cannot cancel the event because it's not in the right state: " + storageEvent.getState().toString());
+                throw new EventException("Cannot cancel the event because it's not in the right state: " + storageEvent.getState().toString());
             } else {
                 storageEvent.setState(State.CANCELED);
             }
@@ -96,7 +96,7 @@ public class EventService {
 
         if (updateRequest.getStateAction() != null && "PUBLISH_EVENT".equals(updateRequest.getStateAction())) {
             if (storageEvent.getState() != State.PENDING) {
-                throw new EventUpdateException("Cannot publish the event because it's not in the right state: " + storageEvent.getState().toString());
+                throw new EventException("Cannot publish the event because it's not in the right state: " + storageEvent.getState().toString());
             } else {
                 storageEvent.setState(State.PUBLISHED);
                 storageEvent.setPublishedOn(LocalDateTime.now());
@@ -106,7 +106,7 @@ public class EventService {
         if (updateRequest.getEventDate() != null) {
             LocalDateTime newEventDate = LocalDateTime.parse(updateRequest.getEventDate(), EwmConstants.DATE_TIME_FORMATTER);
             if (newEventDate.isBefore(LocalDateTime.now().plusHours(1))) {
-                throw new EventUpdateException("Дата начала изменяемого события должна быть не ранее чем за час от даты публикации");
+                throw new EventException("Дата начала изменяемого события должна быть не ранее чем за час от даты публикации");
             } else {
                 storageEvent.setEventDate(newEventDate);
             }
@@ -123,7 +123,7 @@ public class EventService {
     public Event getEventById(long eventId) {
         Optional<Event> optionalEvent = eventRepository.findById(eventId);
         if (optionalEvent.isEmpty()) {
-            throw new EventNotFoundException("Событие " + eventId + " не найдено");
+            throw new NotFoundException("Событие " + eventId + " не найдено");
         } else {
             return optionalEvent.get();
         }
@@ -132,7 +132,7 @@ public class EventService {
     public Event getEventByIdPublic(long eventId, String requestUri, String remoteIp) {
         Event event = getEventById(eventId);
         if (event.getState() != State.PUBLISHED) {
-            throw new EventNotFoundException("Событие " + eventId + " не найдено");
+            throw new NotFoundException("Событие " + eventId + " не найдено");
         }
 
         statClient.newStat(requestUri, remoteIp, LocalDateTime.now());
@@ -173,7 +173,7 @@ public class EventService {
     public Event getEventByIdAndInitiatorId(long eventId, long initiatorId) {
         Optional<Event> optionalEvent = eventRepository.findByIdAndInitiator_id(eventId, initiatorId);
         if (optionalEvent.isEmpty()) {
-            throw new EventNotFoundException("Событие " + eventId + " не найдено или недоступно");
+            throw new NotFoundException("Событие " + eventId + " не найдено или недоступно");
         } else {
             return optionalEvent.get();
         }
@@ -213,7 +213,7 @@ public class EventService {
             }
         }
         if (storageEvent.getState() == State.PUBLISHED) {
-            throw new EventUpdateException("Изменить можно только отмененные события или события в состоянии ожидания модерации");
+            throw new EventException("Изменить можно только отмененные события или события в состоянии ожидания модерации");
         }
 
         if (eventRequest.getAnnotation() != null) {
@@ -232,7 +232,7 @@ public class EventService {
             LocalDateTime eventRequestDate = LocalDateTime.parse(eventRequest.getEventDate(), EwmConstants.DATE_TIME_FORMATTER);
 
             if (eventRequestDate.isBefore(LocalDateTime.now().plusHours(2))) {
-                throw new EventUpdateException("Дата начала изменяемого события должна быть не ранее чем за два часа от даты публикации");
+                throw new EventException("Дата начала изменяемого события должна быть не ранее чем за два часа от даты публикации");
             }
 
             storageEvent.setEventDate(eventRequestDate);

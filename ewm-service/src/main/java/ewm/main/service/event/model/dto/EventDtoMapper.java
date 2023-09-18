@@ -14,7 +14,7 @@ import static ewm.main.service.common.EwmConstants.DATE_TIME_FORMATTER;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class EventDtoMapper {
-    public static EventDto toEventFullDto(Event event) {
+    public static EventDto toEventDto(Event event) {
         if (event != null) {
             return EventDto.builder()
                     .id(event.getId())
@@ -39,11 +39,11 @@ public final class EventDtoMapper {
         }
     }
 
-    public static List<EventDto> toEventFullDtoList(Collection<Event> allEvents) {
+    public static List<EventDto> toEventDtoList(Collection<Event> allEvents) {
         if (allEvents != null) {
             List<EventDto> eventDtoList = new ArrayList<>();
             for (Event event : allEvents) {
-                eventDtoList.add(toEventFullDto(event));
+                eventDtoList.add(toEventDto(event));
             }
             return eventDtoList;
         } else {

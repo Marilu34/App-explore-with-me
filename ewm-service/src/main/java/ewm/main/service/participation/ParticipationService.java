@@ -31,20 +31,20 @@ public class ParticipationService {
         User requester = userService.getUserById(requesterId);
 
         if (event.getInitiator().getId() == requesterId) {
-            throw new ParticipationRequestInitiatorException("Инициатор события " + eventId + "не может добавить запрос на участие в своём событии");
+            throw new ParticipationException("Инициатор события " + eventId + "не может добавить запрос на участие в своём событии");
         }
 
         if (event.getState() != State.PUBLISHED) {
-            throw new ParticipationRequestEventNotPublishedException("Событие " + eventId + "не опубликовано");
+            throw new ParticipationException("Событие " + eventId + "не опубликовано");
         }
 
         Participation oldRequest = getRequestByEventIdAndRequesterId(eventId, requesterId);
         if (oldRequest != null) {
-            throw new ParticipationRequestDuplicationException("Повторно нельзя создать запрос в событие" + eventId);
+            throw new ParticipationException("Повторно нельзя создать запрос в событие" + eventId);
         }
 
         if (event.getParticipantLimit() > 0 && event.getConfirmedRequests() >= event.getParticipantLimit()) {
-            throw new ParticipationRequestLimitReachedException("Достигнут лимит запросов на участие в событии " + eventId);
+            throw new NotFoundException("Достигнут лимит запросов на участие в событии " + eventId);
         }
 
         String newStatus;
@@ -75,7 +75,7 @@ public class ParticipationService {
 
             if ("CONFIRMED".equals(newStatus)) {
                 if (confirmedRequests >= participantLimit) {
-                    throw new ParticipationRequestLimitException("Достигнут лимит по заявкам на событие " + eventId);
+                    throw new ParticipationException("Достигнут лимит по заявкам на событие " + eventId);
                 }
             }
 
@@ -99,7 +99,7 @@ public class ParticipationService {
                         participationRepository.save(storageRequest);
                     }
                 } else {
-                    throw new ParticipationRequestInvalidStateException("Неверное состояние заявки " + requestId + " перед модерацией");
+                    throw new ParticipationException("Неверное состояние заявки " + requestId + " перед модерацией");
                 }
             }
         }
@@ -113,7 +113,7 @@ public class ParticipationService {
     public Participation getRequestById(long requestId) {
         Optional<Participation> optionalRequest = participationRepository.findById(requestId);
         if (optionalRequest.isEmpty()) {
-            throw new ParticipationRequestNotFoundException("Запрос " + requestId + " не найден");
+            throw new NotFoundException("Запрос " + requestId + " не найден");
         } else {
             return optionalRequest.get();
         }
@@ -161,7 +161,7 @@ public class ParticipationService {
     public Participation cancelParticipationRequest(long requestId, long userId) {
         Participation request = getRequestById(requestId);
         if (request.getUser().getId() != userId) {
-            throw new ParticipationRequestNotFoundException("Запрос " + requestId + " не найден");
+            throw new NotFoundException("Запрос " + requestId + " не найден");
         }
 
         String oldStatus = request.getStatus();
