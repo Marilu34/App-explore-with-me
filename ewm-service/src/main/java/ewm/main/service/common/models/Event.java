@@ -1,5 +1,5 @@
 package ewm.main.service.common.models;
 
-public enum EventState {
+public enum Event {
     PENDING, PUBLISHED, CANCELED
 }

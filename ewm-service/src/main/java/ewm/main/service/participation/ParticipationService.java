@@ -1,10 +1,9 @@
 package ewm.main.service.participation;
 
-import ewm.main.service.common.models.EventState;
-import ewm.main.service.common.models.RequestStatus;
+import ewm.main.service.common.models.Event;
+import ewm.main.service.common.models.Status;
 import ewm.main.service.event.EventRepository;
 import ewm.main.service.event.EventService;
-import ewm.main.service.event.model.Event;
 import ewm.main.service.exceptions.*;
 import ewm.main.service.participation.model.Participation;
 import ewm.main.service.participation.model.dto.EventRequestStatusUpdateRequest;
@@ -70,7 +69,7 @@ public class ParticipationService {
     }
 
     public EventRequestStatusUpdateResult updateRequestsStatus(EventRequestStatusUpdateRequest updateRequest, long eventId, long initiatorId) {
-        Event event = eventService.getEventByIdAndInitiatorId(eventId, initiatorId);
+        ewm.main.service.event.model.Event event = eventService.getEventByIdAndInitiatorId(eventId, initiatorId);
         String newStatus = updateRequest.getStatus();
         int participantLimit = event.getParticipantLimit();
         int confirmedRequests = event.getConfirmedRequests();
@@ -90,7 +89,7 @@ public class ParticipationService {
                 Participation storageRequest = getRequestById(requestId);
 
                 //статус можно изменить только у заявок, находящихся в состоянии ожидания
-                if (RequestStatus.PENDING.toString().equals(storageRequest.getStatus())) {
+                if (Status.PENDING.toString().equals(storageRequest.getStatus())) {
 
                     //подтверждение заявки
                     if ("CONFIRMED".equals(newStatus)) {
@@ -129,8 +128,8 @@ public class ParticipationService {
     }
 
     private EventRequestStatusUpdateResult getEventRequestStatusUpdateResult(long eventId) {
-        List<Participation> confirmed = participationRepository.findByEvent_IdAndStatusOrderById(eventId, RequestStatus.CONFIRMED.toString());
-        List<Participation> rejected = participationRepository.findByEvent_IdAndStatusOrderById(eventId, RequestStatus.REJECTED.toString());
+        List<Participation> confirmed = participationRepository.findByEvent_IdAndStatusOrderById(eventId, Status.CONFIRMED.toString());
+        List<Participation> rejected = participationRepository.findByEvent_IdAndStatusOrderById(eventId, Status.REJECTED.toString());
 
         return EventRequestStatusUpdateResult.builder()
                 .confirmedRequests(ParticipationDtoMapper.toParticipationRequestDtoList(confirmed))
@@ -146,7 +145,7 @@ public class ParticipationService {
      * @return созданный объект Participation
      */
     public Participation createParticipationRequest(long eventId, long requesterId) {
-        Event event = eventService.getEventById(eventId);
+        ewm.main.service.event.model.Event event = eventService.getEventById(eventId);
         User requester = userService.getUserById(requesterId);
 
         //инициатор события не может добавить запрос на участие в своём событии (Ожидается код ошибки 409)
@@ -155,7 +154,7 @@ public class ParticipationService {
         }
 
         //нельзя участвовать в неопубликованном событии (Ожидается код ошибки 409)
-        if (event.getState() != EventState.PUBLISHED) {
+        if (event.getState() != Event.PUBLISHED) {
             throw new ParticipationRequestEventNotPublishedException("Событие " + eventId + "не опубликовано");
         }
 
@@ -173,9 +172,9 @@ public class ParticipationService {
         //если для события отключена пре-модерация запросов на участие, то запрос должен автоматически перейти в состояние подтвержденного
         String newStatus;
         if (event.getParticipantLimit() > 0 && event.getRequestModeration()) {
-            newStatus = RequestStatus.PENDING.toString();
+            newStatus = Status.PENDING.toString();
         } else {
-            newStatus = RequestStatus.CONFIRMED.toString();
+            newStatus = Status.CONFIRMED.toString();
             event.setConfirmedRequests(event.getConfirmedRequests() + 1);
             eventRepository.save(event);
         }
@@ -204,12 +203,12 @@ public class ParticipationService {
         }
 
         String oldStatus = request.getStatus();
-        request.setStatus(RequestStatus.CANCELED.toString());
+        request.setStatus(Status.CANCELED.toString());
         Participation storageRequest = participationRepository.save(request);
 
         //если заявка была подтверждена и это событие с ограничением участников и модерацией то уменьшить счетчик подтверждений
-        if (RequestStatus.CONFIRMED.toString().equals(oldStatus)) {
-            Event event = storageRequest.getEvent();
+        if (Status.CONFIRMED.toString().equals(oldStatus)) {
+            ewm.main.service.event.model.Event event = storageRequest.getEvent();
             if (event.getRequestModeration() && event.getParticipantLimit() > 0) {
                 event.setConfirmedRequests(event.getConfirmedRequests() - 1);
             }

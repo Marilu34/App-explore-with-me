@@ -17,28 +17,28 @@ import javax.validation.constraints.Positive;
 @RequiredArgsConstructor
 @Validated
 public class CategoryAdminController {
-    private final CategoryService categoryService;
+    private final CategoryService service;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CategoryDto create(@Valid @RequestBody CategoryDto categoryDto) {
-        log.info("Admin create category: {}", categoryDto);
-        CategoryDto result = CategoryDtoMapper.toCategoryDto(categoryService.create(CategoryDtoMapper.toCategory(categoryDto)));
-        log.info("Admin create category result: {}", result);
+    public CategoryDto createCategoryDto(@Valid @RequestBody CategoryDto categoryDto) {
+        log.info("Администратор создал категорию: {}", categoryDto);
+        CategoryDto result = CategoryDtoMapper.toCategoryDto(service.create(CategoryDtoMapper.toCategory(categoryDto)));
+        log.info("Администратор создает результат категории: {}", result);
         return result;
     }
 
     @PatchMapping("/{categoryId}")
     @ResponseStatus(HttpStatus.OK)
-    public CategoryDto update(@Valid @RequestBody CategoryDto categoryDto, @Positive @PathVariable long categoryId) {
-        log.info("Admin update category: {}, categoryId = {}", categoryDto, categoryId);
-        return CategoryDtoMapper.toCategoryDto(categoryService.update(CategoryDtoMapper.toCategory(categoryDto), categoryId));
+    public CategoryDto updateCategoryDto(@Valid @RequestBody CategoryDto categoryDto, @Positive @PathVariable long categoryId) {
+        log.info("Администратор обновил категорию: {}, categoryId = {}", categoryDto, categoryId);
+        return CategoryDtoMapper.toCategoryDto(service.update(CategoryDtoMapper.toCategory(categoryDto), categoryId));
     }
 
     @DeleteMapping("/{categoryId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@Positive @PathVariable long categoryId) {
-        log.info("Admin delete category: categoryId = {}", categoryId);
-        categoryService.delete(categoryId);
+    public void deleteCategoryDto(@Positive @PathVariable long categoryId) {
+        log.info("Администратор удалил категорию: categoryId = {}", categoryId);
+        service.delete(categoryId);
     }
 }

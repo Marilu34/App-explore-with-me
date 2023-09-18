@@ -1,13 +1,12 @@
 package ewm.main.service.compilation;
 
-import ewm.main.service.common.pagination.PaginationCalculator;
 import ewm.main.service.compilation.model.Compilation;
-import ewm.main.service.compilation.model.dto.NewCompilationDto;
+import ewm.main.service.compilation.model.dto.ShortCompilationDto;
 import ewm.main.service.compilation.model.dto.UpdateCompilationRequest;
 import ewm.main.service.event.EventRepository;
 import ewm.main.service.exceptions.CompilationNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -24,28 +23,27 @@ public class CompilationService {
     public Compilation getCompilationById(long compilationId) {
         Optional<Compilation> optionalCompilation = compilationRepository.findById(compilationId);
         if (optionalCompilation.isEmpty()) {
-            throw new CompilationNotFoundException("Компиляция " + compilationId + " не найдена");
+            throw new CompilationNotFoundException("Компиляция " + compilationId + " не обнаружена");
         } else {
             return optionalCompilation.get();
         }
     }
 
     public List<Compilation> getAllCompilations(Boolean pinned, int from, int size) {
-        Pageable page = PaginationCalculator.getPage(from, size);
         if (pinned != null) {
-            return compilationRepository.findByPinned(pinned, page);
+            return compilationRepository.findByPinned(pinned, PageRequest.of(from / size, size));
         } else {
-            return compilationRepository.findAll(page).getContent();
+            return compilationRepository.findAll(PageRequest.of(from / size, size)).getContent();
         }
     }
 
-    public Compilation create(NewCompilationDto newCompilationDto) {
+    public Compilation create(ShortCompilationDto shortCompilationDto) {
         Compilation compilation = Compilation.builder()
-                .title(newCompilationDto.getTitle())
-                .pinned(newCompilationDto.getPinned())
+                .title(shortCompilationDto.getTitle())
+                .pinned(shortCompilationDto.getPinned())
                 .build();
-        if (newCompilationDto.getEvents() != null && !newCompilationDto.getEvents().isEmpty()) {
-            compilation.setEvents(Set.copyOf(eventRepository.findByIdIn(List.copyOf(newCompilationDto.getEvents()))));
+        if (shortCompilationDto.getEvents() != null && !shortCompilationDto.getEvents().isEmpty()) {
+            compilation.setEvents(Set.copyOf(eventRepository.findByIdIn(List.copyOf(shortCompilationDto.getEvents()))));
         }
 
         return compilationRepository.save(compilation);

@@ -1,7 +1,6 @@
 package ewm.main.service.event;
 
-import ewm.main.service.common.models.EventState;
-import ewm.main.service.event.model.Event;
+import ewm.main.service.common.models.Event;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -16,17 +15,17 @@ import java.util.List;
 public class EventRepositoryImpl {
     private final EntityManager entityManager;
 
-    public List<Event> findAllEventsByFilterAdmin(List<Integer> usersIdList,
-                                                  List<EventState> states,
-                                                  List<Integer> categoriesIdList,
-                                                  LocalDateTime rangeStart,
-                                                  LocalDateTime rangeEnd,
-                                                  int from,
-                                                  int size) {
+    public List<ewm.main.service.event.model.Event> findAllEventsByFilterAdmin(List<Integer> usersIdList,
+                                                                               List<Event> states,
+                                                                               List<Integer> categoriesIdList,
+                                                                               LocalDateTime rangeStart,
+                                                                               LocalDateTime rangeEnd,
+                                                                               int from,
+                                                                               int size) {
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Event> cbQuery = cb.createQuery(Event.class);
-        Root<Event> root = cbQuery.from(Event.class);
+        CriteriaQuery<ewm.main.service.event.model.Event> cbQuery = cb.createQuery(ewm.main.service.event.model.Event.class);
+        Root<ewm.main.service.event.model.Event> root = cbQuery.from(ewm.main.service.event.model.Event.class);
 
         List<Predicate> predicates = new ArrayList<>();
         if (usersIdList != null && !usersIdList.isEmpty()) {
@@ -68,23 +67,23 @@ public class EventRepositoryImpl {
      * @param size             количество событий в наборе
      * @return список событий Event
      */
-    public List<Event> findAllEventsByFilterPublic(String text,
-                                                   List<Integer> categoriesIdList,
-                                                   Boolean paid,
-                                                   LocalDateTime rangeStart,
-                                                   LocalDateTime rangeEnd,
-                                                   Boolean onlyAvailable,
-                                                   String sort,
-                                                   int from,
-                                                   int size) {
+    public List<ewm.main.service.event.model.Event> findAllEventsByFilterPublic(String text,
+                                                                                List<Integer> categoriesIdList,
+                                                                                Boolean paid,
+                                                                                LocalDateTime rangeStart,
+                                                                                LocalDateTime rangeEnd,
+                                                                                Boolean onlyAvailable,
+                                                                                String sort,
+                                                                                int from,
+                                                                                int size) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Event> cbQuery = cb.createQuery(Event.class);
-        Root<Event> root = cbQuery.from(Event.class);
+        CriteriaQuery<ewm.main.service.event.model.Event> cbQuery = cb.createQuery(ewm.main.service.event.model.Event.class);
+        Root<ewm.main.service.event.model.Event> root = cbQuery.from(ewm.main.service.event.model.Event.class);
 
         List<Predicate> predicates = new ArrayList<>();
 
         //это публичный эндпоинт, соответственно в выдаче должны быть только опубликованные события
-        predicates.add(cb.equal(root.get("state").as(String.class), EventState.PUBLISHED.name()));
+        predicates.add(cb.equal(root.get("state").as(String.class), Event.PUBLISHED.name()));
 
         //текстовый поиск (по аннотации и подробному описанию) должен быть без учета регистра букв
         if (text != null && !text.isEmpty()) {

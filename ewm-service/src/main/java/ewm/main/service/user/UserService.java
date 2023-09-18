@@ -1,12 +1,11 @@
 package ewm.main.service.user;
 
-import ewm.main.service.common.pagination.PaginationCalculator;
 import ewm.main.service.exceptions.UserEmailNotUniqueException;
 import ewm.main.service.exceptions.UserNotFoundException;
 import ewm.main.service.user.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -26,11 +25,10 @@ public class UserService {
     }
 
     public List<User> getAllUsers(List<Long> userIdList, int from, int size) {
-        Pageable page = PaginationCalculator.getPage(from, size);
         if (userIdList == null || userIdList.isEmpty()) {
-            return userRepository.findAll(page).getContent();
+            return userRepository.findAll(PageRequest.of(from / size, size)).getContent();
         } else {
-            return userRepository.findByIdInOrderById(userIdList, page);
+            return userRepository.findByIdInOrderById(userIdList, PageRequest.of(from / size, size));
         }
     }
 

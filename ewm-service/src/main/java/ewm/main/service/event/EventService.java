@@ -2,9 +2,7 @@ package ewm.main.service.event;
 
 import ewm.main.service.category.CategoryRepository;
 import ewm.main.service.common.EwmConstants;
-import ewm.main.service.common.models.EventState;
-import ewm.main.service.common.pagination.PaginationCalculator;
-import ewm.main.service.event.model.Event;
+import ewm.main.service.common.models.Event;
 import ewm.main.service.event.model.dto.NewEventDto;
 import ewm.main.service.event.model.dto.UpdateEventAdminRequest;
 import ewm.main.service.event.model.dto.UpdateEventUserRequest;
@@ -13,7 +11,7 @@ import ewm.main.service.exceptions.EventUpdateException;
 import ewm.main.service.user.UserService;
 import ewm.stats.client.StatClient;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -29,8 +27,8 @@ public class EventService {
     private final UserService userService;
     private final StatClient statClient;
 
-    public Event getEventById(long eventId) {
-        Optional<Event> optionalEvent = eventRepository.findById(eventId);
+    public ewm.main.service.event.model.Event getEventById(long eventId) {
+        Optional<ewm.main.service.event.model.Event> optionalEvent = eventRepository.findById(eventId);
         if (optionalEvent.isEmpty()) {
             throw new EventNotFoundException("Событие " + eventId + " не найдено");
         } else {
@@ -44,10 +42,10 @@ public class EventService {
      * @param eventId id события
      * @return полную информацию о событии
      */
-    public Event getEventByIdPublic(long eventId, String requestUri, String remoteIp) {
-        Event event = getEventById(eventId);
+    public ewm.main.service.event.model.Event getEventByIdPublic(long eventId, String requestUri, String remoteIp) {
+        ewm.main.service.event.model.Event event = getEventById(eventId);
         //событие должно быть опубликовано
-        if (event.getState() != EventState.PUBLISHED) {
+        if (event.getState() != Event.PUBLISHED) {
             throw new EventNotFoundException("Событие " + eventId + " не найдено");
         }
 
@@ -60,13 +58,13 @@ public class EventService {
         return eventRepository.getEventsCountByCategoryId(categoryId);
     }
 
-    public List<Event> getAllEventsAdmin(List<Integer> usersIdList,
-                                         List<EventState> states,
-                                         List<Integer> categoriesIdList,
-                                         LocalDateTime rangeStart,
-                                         LocalDateTime rangeEnd,
-                                         int from,
-                                         int size) {
+    public List<ewm.main.service.event.model.Event> getAllEventsAdmin(List<Integer> usersIdList,
+                                                                      List<Event> states,
+                                                                      List<Integer> categoriesIdList,
+                                                                      LocalDateTime rangeStart,
+                                                                      LocalDateTime rangeEnd,
+                                                                      int from,
+                                                                      int size) {
         return eventRepositoryImpl.findAllEventsByFilterAdmin(usersIdList, states, categoriesIdList, rangeStart, rangeEnd, from, size);
     }
 
@@ -84,41 +82,41 @@ public class EventService {
      * @param size             количество событий в наборе
      * @return список событий Event
      */
-    public List<Event> getAllEventsPublic(String text,
-                                          List<Integer> categoriesIdList,
-                                          Boolean paid,
-                                          LocalDateTime rangeStart,
-                                          LocalDateTime rangeEnd,
-                                          Boolean onlyAvailable,
-                                          String sort,
-                                          int from,
-                                          int size,
-                                          String requestUri,
-                                          String remoteIp) {
+    public List<ewm.main.service.event.model.Event> getAllEventsPublic(String text,
+                                                                       List<Integer> categoriesIdList,
+                                                                       Boolean paid,
+                                                                       LocalDateTime rangeStart,
+                                                                       LocalDateTime rangeEnd,
+                                                                       Boolean onlyAvailable,
+                                                                       String sort,
+                                                                       int from,
+                                                                       int size,
+                                                                       String requestUri,
+                                                                       String remoteIp) {
         //информацию о том, что по этому эндпоинту был осуществлен и обработан запрос, нужно сохранить в сервисе статистики
         statClient.newStat(requestUri, remoteIp, LocalDateTime.now());
 
         return eventRepositoryImpl.findAllEventsByFilterPublic(text, categoriesIdList, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
     }
 
-    public Event updateEventByAdmin(UpdateEventAdminRequest updateRequest, long eventId) {
-        Event storageEvent = getEventById(eventId);
+    public ewm.main.service.event.model.Event updateEventByAdmin(UpdateEventAdminRequest updateRequest, long eventId) {
+        ewm.main.service.event.model.Event storageEvent = getEventById(eventId);
 
         //событие можно отклонить, только если оно еще не опубликовано (Ожидается код ошибки 409)
         if (updateRequest.getStateAction() != null && "REJECT_EVENT".equals(updateRequest.getStateAction())) {
-            if (storageEvent.getState() != EventState.PENDING) {
+            if (storageEvent.getState() != Event.PENDING) {
                 throw new EventUpdateException("Cannot cancel the event because it's not in the right state: " + storageEvent.getState().toString());
             } else {
-                storageEvent.setState(EventState.CANCELED);
+                storageEvent.setState(Event.CANCELED);
             }
         }
 
         //событие можно публиковать, только если оно в состоянии ожидания публикации (Ожидается код ошибки 409)
         if (updateRequest.getStateAction() != null && "PUBLISH_EVENT".equals(updateRequest.getStateAction())) {
-            if (storageEvent.getState() != EventState.PENDING) {
+            if (storageEvent.getState() != Event.PENDING) {
                 throw new EventUpdateException("Cannot publish the event because it's not in the right state: " + storageEvent.getState().toString());
             } else {
-                storageEvent.setState(EventState.PUBLISHED);
+                storageEvent.setState(Event.PUBLISHED);
                 storageEvent.setPublishedOn(LocalDateTime.now());
             }
         }
@@ -168,18 +166,17 @@ public class EventService {
         return eventRepository.save(storageEvent);
     }
 
-    public List<Event> getUserEvents(long userId, int from, int size) {
-        Pageable page = PaginationCalculator.getPage(from, size);
-        return eventRepository.findByInitiator_idOrderById(userId, page);
+    public List<ewm.main.service.event.model.Event> getUserEvents(long userId, int from, int size) {
+        return eventRepository.findByInitiator_idOrderById(userId, PageRequest.of(from / size, size));
     }
 
-    public Event createEvent(NewEventDto newEventDto, long userId) {
+    public ewm.main.service.event.model.Event createEvent(NewEventDto newEventDto, long userId) {
         //дата начала изменяемого события должна быть не ранее чем за два часа от даты публикации. (Ожидается код ошибки 409)
         if (LocalDateTime.parse(newEventDto.getEventDate(), EwmConstants.DATE_TIME_FORMATTER).isBefore(LocalDateTime.now().plusHours(2))) {
             throw new EventUpdateException("Дата начала изменяемого события должна быть не ранее чем за два часа от даты публикации");
         }
 
-        Event event = Event.builder()
+        ewm.main.service.event.model.Event event = ewm.main.service.event.model.Event.builder()
                 .category(categoryRepository.getReferenceById(newEventDto.getCategory()))
                 .annotation(newEventDto.getAnnotation())
                 .description(newEventDto.getDescription())
@@ -192,14 +189,14 @@ public class EventService {
                 .createdOn(LocalDateTime.now())
                 .publishedOn(LocalDateTime.now())
                 .initiator(userService.getUserById(userId))
-                .state(EventState.PENDING)
+                .state(Event.PENDING)
                 .build();
 
         return eventRepository.save(event);
     }
 
-    public Event getEventByIdAndInitiatorId(long eventId, long initiatorId) {
-        Optional<Event> optionalEvent = eventRepository.findByIdAndInitiator_id(eventId, initiatorId);
+    public ewm.main.service.event.model.Event getEventByIdAndInitiatorId(long eventId, long initiatorId) {
+        Optional<ewm.main.service.event.model.Event> optionalEvent = eventRepository.findByIdAndInitiator_id(eventId, initiatorId);
         if (optionalEvent.isEmpty()) {
             throw new EventNotFoundException("Событие " + eventId + " не найдено или недоступно");
         } else {
@@ -207,11 +204,11 @@ public class EventService {
         }
     }
 
-    public Event updateEventByInitiator(UpdateEventUserRequest eventRequest, long eventId, long initiatorId) {
-        Event storageEvent = getEventByIdAndInitiatorId(eventId, initiatorId);
+    public ewm.main.service.event.model.Event updateEventByInitiator(UpdateEventUserRequest eventRequest, long eventId, long initiatorId) {
+        ewm.main.service.event.model.Event storageEvent = getEventByIdAndInitiatorId(eventId, initiatorId);
 
         //изменить можно только отмененные события или события в состоянии ожидания модерации (Ожидается код ошибки 409)
-        if (storageEvent.getState() == EventState.PUBLISHED) {
+        if (storageEvent.getState() == Event.PUBLISHED) {
             throw new EventUpdateException("Изменить можно только отмененные события или события в состоянии ожидания модерации");
         }
 
@@ -262,10 +259,10 @@ public class EventService {
         if (eventRequest.getStateAction() != null) {
             switch (eventRequest.getStateAction()) {
                 case "SEND_TO_REVIEW":
-                    storageEvent.setState(EventState.PENDING);
+                    storageEvent.setState(Event.PENDING);
                     break;
                 case "CANCEL_REVIEW":
-                    storageEvent.setState(EventState.CANCELED);
+                    storageEvent.setState(Event.CANCELED);
                     break;
             }
         }

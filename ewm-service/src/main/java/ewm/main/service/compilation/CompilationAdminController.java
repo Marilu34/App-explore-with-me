@@ -2,7 +2,7 @@ package ewm.main.service.compilation;
 
 import ewm.main.service.compilation.model.dto.CompilationDto;
 import ewm.main.service.compilation.model.dto.CompilationDtoMapper;
-import ewm.main.service.compilation.model.dto.NewCompilationDto;
+import ewm.main.service.compilation.model.dto.ShortCompilationDto;
 import ewm.main.service.compilation.model.dto.UpdateCompilationRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,23 +23,23 @@ public class CompilationAdminController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CompilationDto create(@Valid @RequestBody NewCompilationDto newCompilationDto) {
-        log.info("Admin create compilation: {}", newCompilationDto);
-        return CompilationDtoMapper.toCompilationDto(compilationService.create(newCompilationDto));
+    public CompilationDto create(@Valid @RequestBody ShortCompilationDto shortCompilationDto) {
+        log.info("Администратор создал компиляцию: {}", shortCompilationDto);
+        return CompilationDtoMapper.toCompilationDto(compilationService.create(shortCompilationDto));
     }
 
     @PatchMapping("/{compilationId}")
     @ResponseStatus(HttpStatus.OK)
     public CompilationDto update(@RequestBody UpdateCompilationRequest updateCompilationRequest,
                                  @Positive @PathVariable long compilationId) {
-        log.info("Admin update compilation: {}, compilationId = {}", updateCompilationRequest, compilationId);
+        log.info("Администратор обновил компиляцию: {}, compilationId = {}", updateCompilationRequest, compilationId);
         return CompilationDtoMapper.toCompilationDto(compilationService.update(updateCompilationRequest, compilationId));
     }
 
     @DeleteMapping("/{compilationId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@Positive @PathVariable long compilationId) {
-        log.info("Admin delete compilation: compilationId = {}", compilationId);
+        log.info("Администратор удалил компиляцию: compilationId = {}", compilationId);
         compilationService.delete(compilationId);
     }
 }

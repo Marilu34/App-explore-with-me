@@ -13,6 +13,6 @@ import javax.persistence.Embeddable;
 @NoArgsConstructor
 @Embeddable
 public class Location {
-    private float lat;
+    private float lat; //широта
     private float lon;
 }

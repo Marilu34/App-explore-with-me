@@ -2,7 +2,6 @@ package ewm.main.service.event.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import ewm.main.service.category.model.Category;
-import ewm.main.service.common.models.EventState;
 import ewm.main.service.common.models.Location;
 import ewm.main.service.compilation.model.Compilation;
 import ewm.main.service.user.model.User;
@@ -68,7 +67,7 @@ public class Event {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "state", nullable = false)
-    private EventState state;
+    private ewm.main.service.common.models.Event state;
 
     @Column(name = "title", nullable = false)
     private String title;

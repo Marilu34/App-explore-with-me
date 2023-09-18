@@ -1,6 +1,6 @@
 package ewm.main.service.event;
 
-import ewm.main.service.common.models.EventState;
+import ewm.main.service.common.models.Event;
 import ewm.main.service.event.model.dto.EventDtoMapper;
 import ewm.main.service.event.model.dto.EventFullDto;
 import ewm.main.service.event.model.dto.UpdateEventAdminRequest;
@@ -30,7 +30,7 @@ public class EventAdminController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<EventFullDto> getAllEvents(@RequestParam(name = "users", defaultValue = "") List<Integer> usersIdList,
-                                           @RequestParam(name = "states", defaultValue = "") List<EventState> states,
+                                           @RequestParam(name = "states", defaultValue = "") List<Event> states,
                                            @RequestParam(name = "categories", defaultValue = "") List<Integer> categoriesIdList,
                                            @RequestParam(defaultValue = "") @DateTimeFormat(pattern = DATE_TIME_FORMAT) LocalDateTime rangeStart,
                                            @RequestParam(defaultValue = "") @DateTimeFormat(pattern = DATE_TIME_FORMAT) LocalDateTime rangeEnd,

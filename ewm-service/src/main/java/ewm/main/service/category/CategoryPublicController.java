@@ -20,18 +20,20 @@ import java.util.List;
 public class CategoryPublicController {
     private final CategoryService categoryService;
 
+    @GetMapping("/{categoryId}")
+    @ResponseStatus(HttpStatus.OK)
+    public CategoryDto getCategoryById(@Positive @PathVariable long categoryId) {
+        log.info("Получение публичной категории: categoryId = {}", categoryId);
+        return CategoryDtoMapper.toCategoryDto(categoryService.getCategoryById(categoryId));
+    }
+
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<CategoryDto> getAllCategories(@PositiveOrZero @RequestParam(defaultValue = "0") int from,
                                               @Positive @RequestParam(defaultValue = "10") int size) {
-        log.info("Public get all categories: from = {}, size = {}", from, size);
+        log.info("Получение всех публичных категорий: from = {}, size = {}", from, size);
         return CategoryDtoMapper.toCategoryDtoList(categoryService.getAllCategories(from, size));
     }
 
-    @GetMapping("/{categoryId}")
-    @ResponseStatus(HttpStatus.OK)
-    public CategoryDto getCategoryById(@Positive @PathVariable long categoryId) {
-        log.info("Public get category: categoryId = {}", categoryId);
-        return CategoryDtoMapper.toCategoryDto(categoryService.getCategoryById(categoryId));
-    }
+
 }

@@ -1,5 +1,5 @@
 package ewm.main.service.common.models;
 
-public enum RequestStatus {
+public enum Status {
     PENDING, CONFIRMED, REJECTED, CANCELED
 }

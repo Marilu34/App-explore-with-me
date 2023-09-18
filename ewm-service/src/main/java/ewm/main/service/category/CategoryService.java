@@ -1,14 +1,13 @@
 package ewm.main.service.category;
 
 import ewm.main.service.category.model.Category;
-import ewm.main.service.common.pagination.PaginationCalculator;
 import ewm.main.service.event.EventService;
 import ewm.main.service.exceptions.CategoryHaveLinkedEventsException;
 import ewm.main.service.exceptions.CategoryNameNotUniqueException;
-import ewm.main.service.exceptions.CategoryNotFoundException;
+import ewm.main.service.exceptions.CategoryException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,26 +19,13 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final EventService eventService;
 
-    public Category getCategoryById(long categoryId) {
-        Optional<Category> optionalCategory = categoryRepository.findById(categoryId);
-        if (optionalCategory.isEmpty()) {
-            throw new CategoryNotFoundException("Категория " + categoryId + " не найдена");
-        } else {
-            return optionalCategory.get();
-        }
-    }
-
-    public List<Category> getAllCategories(int from, int size) {
-        Pageable page = PaginationCalculator.getPage(from, size);
-        return categoryRepository.findAll(page).getContent();
-    }
 
     public Category create(Category category) {
         Category storageCategory;
         try {
             storageCategory = categoryRepository.save(category);
         } catch (DataIntegrityViolationException e) {
-            throw new CategoryNameNotUniqueException("Название категории не уникально");
+            throw new CategoryNameNotUniqueException("Такая категория уже существует");
         }
 
         return storageCategory;
@@ -54,10 +40,23 @@ public class CategoryService {
         try {
             storageCategory = categoryRepository.save(category);
         } catch (DataIntegrityViolationException e) {
-            throw new CategoryNameNotUniqueException("Название категории не уникально");
+            throw new CategoryNameNotUniqueException("Такая категория уже существует");
         }
 
         return storageCategory;
+    }
+
+    public Category getCategoryById(long categoryId) {
+        Optional<Category> optionalCategory = categoryRepository.findById(categoryId);
+        if (optionalCategory.isEmpty()) {
+            throw new CategoryException("Категория " + categoryId + " не обнаружена");
+        } else {
+            return optionalCategory.get();
+        }
+    }
+
+    public List<Category> getAllCategories(int from, int size) {
+        return categoryRepository.findAll(PageRequest.of(from / size, size)).getContent();
     }
 
     public void delete(long categoryId) {

@@ -27,7 +27,7 @@ public class ErrorHandler {
                 .build();
     }
 
-    @ExceptionHandler({CategoryNotFoundException.class,
+    @ExceptionHandler({CategoryException.class,
             CompilationNotFoundException.class,
             EventNotFoundException.class,
             UserNotFoundException.class,
