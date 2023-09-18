@@ -10,6 +10,14 @@ import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class CategoryDtoMapper {
+    public static CategoryDto toCategoryDto(Category category) {
+        if (category != null) {
+            return CategoryDto.builder().id(category.getId()).name(category.getName()).build();
+        } else {
+            return null;
+        }
+    }
+
     public static Category toCategory(CategoryDto categoryDto) {
         if (categoryDto != null) {
             return Category.builder().id(categoryDto.getId()).name(categoryDto.getName()).build();
@@ -18,13 +26,6 @@ public final class CategoryDtoMapper {
         }
     }
 
-    public static CategoryDto toCategoryDto(Category category) {
-        if (category != null) {
-            return CategoryDto.builder().id(category.getId()).name(category.getName()).build();
-        } else {
-            return null;
-        }
-    }
 
     public static List<CategoryDto> toCategoryDtoList(Collection<Category> categories) {
         if (categories != null) {
