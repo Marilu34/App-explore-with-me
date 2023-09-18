@@ -21,26 +21,28 @@ import java.util.List;
 public class UserAdminController {
     private final UserService userService;
 
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public UserDto create(@Valid @RequestBody UserDto userDto) {
+        log.info("Администратор создал пользователя: {}", userDto);
+        return UserDtoMapper.toUserDto(userService.create(UserDtoMapper.toUser(userDto)));
+    }
+
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<UserDto> getAllUsers(@RequestParam(name = "ids", required = false) List<Long> userIdList,
                                      @PositiveOrZero @RequestParam(defaultValue = "0") int from,
                                      @Positive @RequestParam(defaultValue = "10") int size) {
-        log.info("Admin get all users: ids = {}, from = {}, size = {}", userIdList, from, size);
+        log.info("Администратор получил доступ ко всем пользователям: ids = {}, from = {}, size = {}", userIdList, from, size);
         return UserDtoMapper.toUserDtoList(userService.getAllUsers(userIdList, from, size));
     }
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public UserDto create(@Valid @RequestBody UserDto userDto) {
-        log.info("Admin create user: {}", userDto);
-        return UserDtoMapper.toUserDto(userService.create(UserDtoMapper.toUser(userDto)));
-    }
 
     @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@Positive @PathVariable long userId) {
-        log.info("Admin delete user: userId = {}", userId);
+        log.info("Администратор удалил пользователя: userId = {}", userId);
         userService.delete(userId);
     }
 }

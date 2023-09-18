@@ -9,6 +9,18 @@ import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class UserDtoMapper {
+    public static User toUser(UserDto userDto) {
+        if (userDto != null) {
+            return User.builder()
+                    .id(userDto.getId())
+                    .name(userDto.getName())
+                    .email(userDto.getEmail())
+                    .build();
+        } else {
+            return null;
+        }
+    }
+
     public static UserDto toUserDto(User user) {
         if (user != null) {
             return UserDto.builder()
@@ -40,26 +52,5 @@ public final class UserDtoMapper {
         }
     }
 
-    public static User toUser(UserDto userDto) {
-        if (userDto != null) {
-            return User.builder()
-                    .id(userDto.getId())
-                    .name(userDto.getName())
-                    .email(userDto.getEmail())
-                    .build();
-        } else {
-            return null;
-        }
-    }
 
-    public static User toUser(UserShortDto userShortDto) {
-        if (userShortDto != null) {
-            return User.builder()
-                    .id(userShortDto.getId())
-                    .name(userShortDto.getName())
-                    .build();
-        } else {
-            return null;
-        }
-    }
 }

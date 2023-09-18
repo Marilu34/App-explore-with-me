@@ -7,7 +7,7 @@ import java.util.List;
 
 @Data
 @Builder
-public class EventRequestStatusUpdateResult {
+public class EventRequestResponse {
     private List<ParticipationRequestDto> confirmedRequests;
     private List<ParticipationRequestDto> rejectedRequests;
 }

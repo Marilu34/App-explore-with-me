@@ -23,12 +23,9 @@ public class Compilation {
     private long id;
 
     @ManyToMany(fetch = FetchType.LAZY,
-            cascade = {
-                    CascadeType.PERSIST,
-                    CascadeType.MERGE
-            })
-    @JoinTable(
-            name = "compilation_events",
+            cascade = {CascadeType.PERSIST,
+                    CascadeType.MERGE})
+    @JoinTable(name = "compilation_events",
             joinColumns = @JoinColumn(name = "compilation_id"),
             inverseJoinColumns = @JoinColumn(name = "event_id"))
     @Builder.Default

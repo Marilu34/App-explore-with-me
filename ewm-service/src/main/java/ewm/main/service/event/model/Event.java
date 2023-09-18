@@ -2,10 +2,12 @@ package ewm.main.service.event.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import ewm.main.service.category.model.Category;
+import ewm.main.service.common.models.State;
 import ewm.main.service.common.models.Location;
 import ewm.main.service.compilation.model.Compilation;
 import ewm.main.service.user.model.User;
 import lombok.*;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -67,7 +69,7 @@ public class Event {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "state", nullable = false)
-    private ewm.main.service.common.models.Event state;
+    private State state;
 
     @Column(name = "title", nullable = false)
     private String title;
@@ -76,11 +78,8 @@ public class Event {
     private int views;
 
     @ManyToMany(fetch = FetchType.LAZY,
-            cascade = {
-                    CascadeType.PERSIST,
-                    CascadeType.MERGE
-            },
-            mappedBy = "events")
+            cascade = {CascadeType.PERSIST,
+                    CascadeType.MERGE}, mappedBy = "events")
     @JsonIgnore
     @EqualsAndHashCode.Exclude
     private Set<Compilation> compilations = new HashSet<>();

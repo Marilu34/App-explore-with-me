@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -14,6 +15,17 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+
+    public User create(User user) {
+        User storageUser;
+        try {
+            storageUser = userRepository.save(user);
+        } catch (DataIntegrityViolationException e) {
+            throw new UserEmailNotUniqueException("E-mail не уникален");
+        }
+
+        return storageUser;
+    }
 
     public User getUserById(long userId) {
         Optional<User> optionalUser = userRepository.findById(userId);
@@ -32,16 +44,6 @@ public class UserService {
         }
     }
 
-    public User create(User user) {
-        User storageUser;
-        try {
-            storageUser = userRepository.save(user);
-        } catch (DataIntegrityViolationException e) {
-            throw new UserEmailNotUniqueException("E-mail не уникален");
-        }
-
-        return storageUser;
-    }
 
     public void delete(long userId) {
         userRepository.delete(getUserById(userId));

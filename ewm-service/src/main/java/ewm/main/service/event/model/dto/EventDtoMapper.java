@@ -1,12 +1,11 @@
 package ewm.main.service.event.model.dto;
 
 import ewm.main.service.category.model.dto.CategoryDtoMapper;
-import ewm.main.service.common.models.Event;
+import ewm.main.service.event.model.Event;
 import ewm.main.service.user.model.dto.UserDtoMapper;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -15,9 +14,9 @@ import static ewm.main.service.common.EwmConstants.DATE_TIME_FORMATTER;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class EventDtoMapper {
-    public static EventFullDto toEventFullDto(ewm.main.service.event.model.Event event) {
+    public static EventDto toEventFullDto(Event event) {
         if (event != null) {
-            return EventFullDto.builder()
+            return EventDto.builder()
                     .id(event.getId())
                     .annotation(event.getAnnotation())
                     .category(CategoryDtoMapper.toCategoryDto(event.getCategory()))
@@ -40,44 +39,19 @@ public final class EventDtoMapper {
         }
     }
 
-    public static List<EventFullDto> toEventFullDtoList(Collection<ewm.main.service.event.model.Event> allEvents) {
+    public static List<EventDto> toEventFullDtoList(Collection<Event> allEvents) {
         if (allEvents != null) {
-            List<EventFullDto> eventFullDtoList = new ArrayList<>();
-            for (ewm.main.service.event.model.Event event : allEvents) {
-                eventFullDtoList.add(toEventFullDto(event));
+            List<EventDto> eventDtoList = new ArrayList<>();
+            for (Event event : allEvents) {
+                eventDtoList.add(toEventFullDto(event));
             }
-            return eventFullDtoList;
+            return eventDtoList;
         } else {
             return null;
         }
     }
 
-    public static ewm.main.service.event.model.Event toEvent(EventFullDto eventFullDto) {
-        if (eventFullDto != null) {
-            return ewm.main.service.event.model.Event.builder()
-                    .id(eventFullDto.getId())
-                    .annotation(eventFullDto.getAnnotation())
-                    .category(CategoryDtoMapper.toCategory(eventFullDto.getCategory()))
-                    .confirmedRequests(eventFullDto.getConfirmedRequests())
-                    .createdOn(LocalDateTime.parse(eventFullDto.getCreatedOn(), DATE_TIME_FORMATTER))
-                    .description(eventFullDto.getDescription())
-                    .eventDate(LocalDateTime.parse(eventFullDto.getEventDate(), DATE_TIME_FORMATTER))
-                    .initiator(UserDtoMapper.toUser(eventFullDto.getInitiator()))
-                    .location(eventFullDto.getLocation())
-                    .paid(eventFullDto.isPaid())
-                    .participantLimit(eventFullDto.getParticipantLimit())
-                    .publishedOn(LocalDateTime.parse(eventFullDto.getPublishedOn(), DATE_TIME_FORMATTER))
-                    .requestModeration(eventFullDto.isRequestModeration())
-                    .state(Event.valueOf(eventFullDto.getState()))
-                    .title(eventFullDto.getTitle())
-                    .views(eventFullDto.getViews())
-                    .build();
-        } else {
-            return null;
-        }
-    }
-
-    public static EventShortDto toEventShortDto(ewm.main.service.event.model.Event event) {
+    public static EventShortDto toEventShortDto(Event event) {
         if (event != null) {
             return EventShortDto.builder()
                     .id(event.getId())
@@ -95,10 +69,10 @@ public final class EventDtoMapper {
         }
     }
 
-    public static List<EventShortDto> toEventShortDtoList(Collection<ewm.main.service.event.model.Event> eventList) {
+    public static List<EventShortDto> toEventShortDtoList(Collection<Event> eventList) {
         if (eventList != null) {
             List<EventShortDto> eventShortDtoList = new ArrayList<>();
-            for (ewm.main.service.event.model.Event event : eventList) {
+            for (Event event : eventList) {
                 eventShortDtoList.add(toEventShortDto(event));
             }
             return eventShortDtoList;

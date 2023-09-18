@@ -27,6 +27,19 @@ public class ErrorHandler {
                 .build();
     }
 
+    @ExceptionHandler({NullPointerException.class,
+            IllegalArgumentException.class,
+            EntityNotFoundException.class})
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse serverExceptionHandler(RuntimeException e) {
+        log.info(e.getMessage(), e);
+        return ErrorResponse.builder()
+                .status("NOT_FOUND")
+                .reason("Внутренняя ошибка сервера")
+                .message(e.getMessage())
+                .timestamp(LocalDateTime.now().format(EwmConstants.DATE_TIME_FORMATTER))
+                .build();
+    }
     @ExceptionHandler({CategoryException.class,
             CompilationNotFoundException.class,
             EventNotFoundException.class,
@@ -64,17 +77,5 @@ public class ErrorHandler {
                 .build();
     }
 
-    @ExceptionHandler({NullPointerException.class,
-            IllegalArgumentException.class,
-            EntityNotFoundException.class})
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse serverExceptionHandler(RuntimeException e) {
-        log.info(e.getMessage(), e);
-        return ErrorResponse.builder()
-                .status("NOT_FOUND")
-                .reason("Внутренняя ошибка сервера")
-                .message(e.getMessage())
-                .timestamp(LocalDateTime.now().format(EwmConstants.DATE_TIME_FORMATTER))
-                .build();
-    }
+
 }

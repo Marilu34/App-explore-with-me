@@ -1,7 +1,7 @@
 package ewm.main.service.event;
 
 import ewm.main.service.event.model.dto.EventDtoMapper;
-import ewm.main.service.event.model.dto.EventFullDto;
+import ewm.main.service.event.model.dto.EventDto;
 import ewm.main.service.event.model.dto.EventShortDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,11 +28,11 @@ public class EventPublicController {
 
     @GetMapping("/{eventId}")
     @ResponseStatus(HttpStatus.OK)
-    public EventFullDto getEventByIdPublic(@PathVariable long eventId, HttpServletRequest request) {
+    public EventDto getEventByIdPublic(@PathVariable long eventId, HttpServletRequest request) {
         String remoteIp = request.getRemoteAddr();
         String requestUri = request.getRequestURI();
 
-        log.info("Public get event: eventId = {}, remoteIp = {}, requestUri = {}", eventId, remoteIp, requestUri);
+        log.info("Получить публичное событие: eventId = {}, remoteIp = {}, requestUri = {}", eventId, remoteIp, requestUri);
         return EventDtoMapper.toEventFullDto(eventService.getEventByIdPublic(eventId, requestUri, remoteIp));
     }
 
@@ -51,9 +51,9 @@ public class EventPublicController {
         String remoteIp = request.getRemoteAddr();
         String requestUri = request.getRequestURI();
 
-        log.info("Public get all events: text = {}, categoriesIdList = {}, paid = {}, rangeStart = {}, rangeEnd = {}, onlyAvailable = {}, sort = {}, from = {}, size = {}",
+        log.info("Получить все публичные события: text = {}, categoriesIdList = {}, paid = {}, rangeStart = {}, rangeEnd = {}, onlyAvailable = {}, sort = {}, from = {}, size = {}",
                 text, categoriesIdList, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
-        log.info("Public get all events: remoteIp = {}, requestUri = {}", remoteIp, requestUri);
+        log.info("Получить все публичные события: remoteIp = {}, requestUri = {}", remoteIp, requestUri);
 
         return EventDtoMapper.toEventShortDtoList(
                 eventService.getAllEventsPublic(text, categoriesIdList, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size, requestUri, remoteIp)

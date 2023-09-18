@@ -6,7 +6,7 @@ import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 @Data
-public class EventRequestStatusUpdateRequest {
+public class EventRequestQuery {
     @NotEmpty
     private List<Long> requestIds;
 

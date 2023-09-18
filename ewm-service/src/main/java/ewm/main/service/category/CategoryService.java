@@ -16,8 +16,9 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class CategoryService {
-    private final CategoryRepository categoryRepository;
     private final EventService eventService;
+
+    private final CategoryRepository categoryRepository;
 
 
     public Category create(Category category) {

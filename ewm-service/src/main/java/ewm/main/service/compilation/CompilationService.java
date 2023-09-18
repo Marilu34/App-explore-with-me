@@ -2,7 +2,7 @@ package ewm.main.service.compilation;
 
 import ewm.main.service.compilation.model.Compilation;
 import ewm.main.service.compilation.model.dto.ShortCompilationDto;
-import ewm.main.service.compilation.model.dto.UpdateCompilationRequest;
+import ewm.main.service.compilation.model.dto.CompilationRequest;
 import ewm.main.service.event.EventRepository;
 import ewm.main.service.exceptions.CompilationNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +17,38 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor
 public class CompilationService {
-    private final CompilationRepository compilationRepository;
+
     private final EventRepository eventRepository;
+
+    private final CompilationRepository compilationRepository;
+
+    public Compilation create(ShortCompilationDto shortCompilationDto) {
+        Compilation compilation = Compilation.builder()
+                .title(shortCompilationDto.getTitle())
+                .pinned(shortCompilationDto.getPinned())
+                .build();
+        if (shortCompilationDto.getEvents() != null && !shortCompilationDto.getEvents().isEmpty()) {
+            compilation.setEvents(Set.copyOf(eventRepository.findByIdIn(List.copyOf(shortCompilationDto.getEvents()))));
+        }
+
+        return compilationRepository.save(compilation);
+    }
+
+    public Compilation update(CompilationRequest updateRequest, long compilationId) {
+        Compilation compilation = getCompilationById(compilationId);
+        if (updateRequest.getEvents() != null) {
+            if (updateRequest.getEvents().isEmpty()) {
+                compilation.setEvents(new HashSet<>());
+            } else {
+                compilation.setEvents(eventRepository.findByIdIn(List.copyOf(updateRequest.getEvents())));
+            }
+        }
+
+        if (updateRequest.getPinned() != null) compilation.setPinned(updateRequest.getPinned());
+        if (updateRequest.getTitle() != null) compilation.setTitle(updateRequest.getTitle());
+
+        return compilationRepository.save(compilation);
+    }
 
     public Compilation getCompilationById(long compilationId) {
         Optional<Compilation> optionalCompilation = compilationRepository.findById(compilationId);
@@ -36,35 +66,6 @@ public class CompilationService {
             return compilationRepository.findAll(PageRequest.of(from / size, size)).getContent();
         }
     }
-
-    public Compilation create(ShortCompilationDto shortCompilationDto) {
-        Compilation compilation = Compilation.builder()
-                .title(shortCompilationDto.getTitle())
-                .pinned(shortCompilationDto.getPinned())
-                .build();
-        if (shortCompilationDto.getEvents() != null && !shortCompilationDto.getEvents().isEmpty()) {
-            compilation.setEvents(Set.copyOf(eventRepository.findByIdIn(List.copyOf(shortCompilationDto.getEvents()))));
-        }
-
-        return compilationRepository.save(compilation);
-    }
-
-    public Compilation update(UpdateCompilationRequest updateRequest, long compilationId) {
-        Compilation compilation = getCompilationById(compilationId);
-        if (updateRequest.getEvents() != null) {
-            if (updateRequest.getEvents().isEmpty()) {
-                compilation.setEvents(new HashSet<>());
-            } else {
-                compilation.setEvents(eventRepository.findByIdIn(List.copyOf(updateRequest.getEvents())));
-            }
-        }
-
-        if (updateRequest.getPinned() != null) compilation.setPinned(updateRequest.getPinned());
-        if (updateRequest.getTitle() != null) compilation.setTitle(updateRequest.getTitle());
-
-        return compilationRepository.save(compilation);
-    }
-
     public void delete(long compilationId) {
         compilationRepository.delete(getCompilationById(compilationId));
     }

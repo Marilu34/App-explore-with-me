@@ -20,26 +20,27 @@ import java.util.List;
 public class ParticipationPrivateController {
     private final ParticipationService participationService;
 
-    @GetMapping("/{userId}/requests")
-    @ResponseStatus(HttpStatus.OK)
-    public List<ParticipationRequestDto> getRequestsByUserId(@Positive @PathVariable long userId) {
-        log.info("Get all requests for user: userId = {}", userId);
-        return ParticipationDtoMapper.toParticipationRequestDtoList(participationService.getRequestsByUserId(userId));
-    }
-
     @PostMapping("/{userId}/requests")
     @ResponseStatus(HttpStatus.CREATED)
     public ParticipationRequestDto createParticipationRequest(@Positive @PathVariable long userId,
                                                               @Positive @RequestParam long eventId) {
-        log.info("Create participation request: userId = {}, eventId = {}", userId, eventId);
+        log.info("Создать заявку на участие: userId = {}, eventId = {}", userId, eventId);
         return ParticipationDtoMapper.toParticipationRequestDto(participationService.createParticipationRequest(eventId, userId));
     }
+
+    @GetMapping("/{userId}/requests")
+    @ResponseStatus(HttpStatus.OK)
+    public List<ParticipationRequestDto> getRequestsByUserId(@Positive @PathVariable long userId) {
+        log.info("Получать все запросы для пользователя: userId = {}", userId);
+        return ParticipationDtoMapper.toParticipationRequestDtoList(participationService.getRequestsByUserId(userId));
+    }
+
 
     @PatchMapping("/{userId}/requests/{requestId}/cancel")
     @ResponseStatus(HttpStatus.OK)
     public ParticipationRequestDto cancelParticipationRequest(@Positive @PathVariable long userId,
                                                               @Positive @PathVariable long requestId) {
-        log.info("Cancel participation request: userId = {}, requestId = {}", userId, requestId);
+        log.info("Отменить заявку на участие: userId = {}, requestId = {}", userId, requestId);
         return ParticipationDtoMapper.toParticipationRequestDto(participationService.cancelParticipationRequest(requestId, userId));
     }
 }

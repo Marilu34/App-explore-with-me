@@ -9,7 +9,7 @@ import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
 @Data
-public class NewEventDto {
+public class EventDtoUpdated {
     @NotEmpty
     @Size(min = 20, max = 2000)
     private String annotation;

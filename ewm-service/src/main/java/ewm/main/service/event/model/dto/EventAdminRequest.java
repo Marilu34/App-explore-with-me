@@ -4,7 +4,7 @@ import ewm.main.service.common.models.Location;
 import lombok.Data;
 
 @Data
-public class UpdateEventAdminRequest {
+public class EventAdminRequest {
     private String annotation;
 
     private Long category;

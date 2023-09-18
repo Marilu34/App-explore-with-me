@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.Set;
 
 @Data
-public class UpdateCompilationRequest {
+public class CompilationRequest {
     private Set<Long> events;
 
     private Boolean pinned;

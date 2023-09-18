@@ -8,7 +8,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class EventFullDto {
+public class EventDto {
     private long id;
 
     private String annotation;

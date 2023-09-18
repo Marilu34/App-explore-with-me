@@ -3,7 +3,7 @@ package ewm.main.service.compilation;
 import ewm.main.service.compilation.model.dto.CompilationDto;
 import ewm.main.service.compilation.model.dto.CompilationDtoMapper;
 import ewm.main.service.compilation.model.dto.ShortCompilationDto;
-import ewm.main.service.compilation.model.dto.UpdateCompilationRequest;
+import ewm.main.service.compilation.model.dto.CompilationRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -30,10 +30,10 @@ public class CompilationAdminController {
 
     @PatchMapping("/{compilationId}")
     @ResponseStatus(HttpStatus.OK)
-    public CompilationDto update(@RequestBody UpdateCompilationRequest updateCompilationRequest,
+    public CompilationDto update(@RequestBody CompilationRequest compilationRequest,
                                  @Positive @PathVariable long compilationId) {
-        log.info("Администратор обновил компиляцию: {}, compilationId = {}", updateCompilationRequest, compilationId);
-        return CompilationDtoMapper.toCompilationDto(compilationService.update(updateCompilationRequest, compilationId));
+        log.info("Администратор обновил компиляцию: {}, compilationId = {}", compilationRequest, compilationId);
+        return CompilationDtoMapper.toCompilationDto(compilationService.update(compilationRequest, compilationId));
     }
 
     @DeleteMapping("/{compilationId}")
