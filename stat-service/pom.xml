@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>stats-service</artifactId>
+    <artifactId>stat-service</artifactId>
 
     <properties>
         <java.version>11</java.version>
