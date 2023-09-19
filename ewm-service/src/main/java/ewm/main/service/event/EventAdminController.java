@@ -16,7 +16,7 @@ import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static ewm.main.service.common.EwmConstants.DATE_TIME_FORMAT;
+import static ewm.main.service.common.Date.DATE_TIME_FORMAT;
 
 
 @RestController

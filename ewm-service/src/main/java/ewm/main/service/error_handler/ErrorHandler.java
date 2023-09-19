@@ -1,6 +1,6 @@
 package ewm.main.service.error_handler;
 
-import ewm.main.service.common.EwmConstants;
+import ewm.main.service.common.Date;
 import ewm.main.service.exceptions.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -24,7 +24,7 @@ public class ErrorHandler {
                 .status("BAD_REQUEST")
                 .reason("error")
                 .message(e.getMessage())
-                .timestamp(LocalDateTime.now().format(EwmConstants.DATE_TIME_FORMATTER))
+                .timestamp(LocalDateTime.now().format(Date.DATE_TIME_FORMATTER))
                 .build();
     }
 
@@ -38,7 +38,7 @@ public class ErrorHandler {
                 .status("NOT_FOUND")
                 .reason("Внутренняя ошибка сервера")
                 .message(e.getMessage())
-                .timestamp(LocalDateTime.now().format(EwmConstants.DATE_TIME_FORMATTER))
+                .timestamp(LocalDateTime.now().format(Date.DATE_TIME_FORMATTER))
                 .build();
     }
 
@@ -51,7 +51,7 @@ public class ErrorHandler {
                 .status("NOT_FOUND")
                 .reason("error")
                 .message(e.getMessage())
-                .timestamp(LocalDateTime.now().format(EwmConstants.DATE_TIME_FORMATTER))
+                .timestamp(LocalDateTime.now().format(Date.DATE_TIME_FORMATTER))
                 .build();
     }
 
@@ -66,7 +66,7 @@ public class ErrorHandler {
                 .status("CONFLICT")
                 .reason("error")
                 .message(e.getMessage())
-                .timestamp(LocalDateTime.now().format(EwmConstants.DATE_TIME_FORMATTER))
+                .timestamp(LocalDateTime.now().format(Date.DATE_TIME_FORMATTER))
                 .build();
     }
 

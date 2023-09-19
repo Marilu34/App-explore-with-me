@@ -1,7 +1,7 @@
 package ewm.main.service.event;
 
 import ewm.main.service.category.CategoryRepository;
-import ewm.main.service.common.EwmConstants;
+import ewm.main.service.common.Date;
 import ewm.main.service.common.models.State;
 import ewm.main.service.event.model.Event;
 import ewm.main.service.event.model.dto.EventDtoUpdated;
@@ -29,7 +29,7 @@ public class EventService {
     private final CategoryRepository categoryRepository;
 
     public Event createEvent(EventDtoUpdated eventDtoUpdated, long userId) {
-        if (LocalDateTime.parse(eventDtoUpdated.getEventDate(), EwmConstants.DATE_TIME_FORMATTER).isBefore(LocalDateTime.now().plusHours(2))) {
+        if (LocalDateTime.parse(eventDtoUpdated.getEventDate(), Date.DATE_TIME_FORMATTER).isBefore(LocalDateTime.now().plusHours(2))) {
             throw new EventException("Дата начала изменяемого события должна быть не ранее чем за два часа от даты публикации");
         }
 
@@ -37,7 +37,7 @@ public class EventService {
                 .category(categoryRepository.getReferenceById(eventDtoUpdated.getCategory()))
                 .annotation(eventDtoUpdated.getAnnotation())
                 .description(eventDtoUpdated.getDescription())
-                .eventDate(LocalDateTime.parse(eventDtoUpdated.getEventDate(), EwmConstants.DATE_TIME_FORMATTER))
+                .eventDate(LocalDateTime.parse(eventDtoUpdated.getEventDate(), Date.DATE_TIME_FORMATTER))
                 .location(eventDtoUpdated.getLocation())
                 .paid(eventDtoUpdated.isPaid())
                 .participantLimit(eventDtoUpdated.getParticipantLimit())
@@ -104,7 +104,7 @@ public class EventService {
         }
 
         if (updateRequest.getEventDate() != null) {
-            LocalDateTime newEventDate = LocalDateTime.parse(updateRequest.getEventDate(), EwmConstants.DATE_TIME_FORMATTER);
+            LocalDateTime newEventDate = LocalDateTime.parse(updateRequest.getEventDate(), Date.DATE_TIME_FORMATTER);
             if (newEventDate.isBefore(LocalDateTime.now().plusHours(1))) {
                 throw new EventException("Дата начала изменяемого события должна быть не ранее чем за час от даты публикации");
             } else {
@@ -229,7 +229,7 @@ public class EventService {
         }
 
         if (eventRequest.getEventDate() != null) {
-            LocalDateTime eventRequestDate = LocalDateTime.parse(eventRequest.getEventDate(), EwmConstants.DATE_TIME_FORMATTER);
+            LocalDateTime eventRequestDate = LocalDateTime.parse(eventRequest.getEventDate(), Date.DATE_TIME_FORMATTER);
 
             if (eventRequestDate.isBefore(LocalDateTime.now().plusHours(2))) {
                 throw new EventException("Дата начала изменяемого события должна быть не ранее чем за два часа от даты публикации");

@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static ewm.main.service.common.EwmConstants.DATE_TIME_FORMATTER;
+import static ewm.main.service.common.Date.DATE_TIME_FORMATTER;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class EventDtoMapper {

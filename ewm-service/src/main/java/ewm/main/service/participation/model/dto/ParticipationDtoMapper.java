@@ -1,6 +1,6 @@
 package ewm.main.service.participation.model.dto;
 
-import ewm.main.service.common.EwmConstants;
+import ewm.main.service.common.Date;
 import ewm.main.service.participation.model.Participation;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -15,7 +15,7 @@ public final class ParticipationDtoMapper {
         if (participation != null) {
             return ParticipationRequestDto.builder()
                     .id(participation.getId())
-                    .created(participation.getCreated().format(EwmConstants.DATE_TIME_FORMATTER))
+                    .created(participation.getCreated().format(Date.DATE_TIME_FORMATTER))
                     .requester(participation.getUser().getId())
                     .event(participation.getEvent().getId())
                     .status(participation.getStatus())
