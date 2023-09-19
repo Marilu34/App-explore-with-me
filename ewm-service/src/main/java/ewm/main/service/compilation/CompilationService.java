@@ -66,6 +66,7 @@ public class CompilationService {
             return compilationRepository.findAll(PageRequest.of(from / size, size)).getContent();
         }
     }
+
     public void delete(long compilationId) {
         compilationRepository.delete(getCompilationById(compilationId));
     }

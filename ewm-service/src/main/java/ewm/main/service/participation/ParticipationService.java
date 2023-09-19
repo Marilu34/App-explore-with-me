@@ -65,6 +65,7 @@ public class ParticipationService {
 
         return participationRepository.save(request);
     }
+
     public EventRequestResponse updateRequestsStatus(EventRequestQuery updateRequest, long eventId, long initiatorId) {
         ewm.main.service.event.model.Event event = eventService.getEventByIdAndInitiatorId(eventId, initiatorId);
         String newStatus = updateRequest.getStatus();
@@ -110,6 +111,7 @@ public class ParticipationService {
 
         return updateResult;
     }
+
     public Participation getRequestById(long requestId) {
         Optional<Participation> optionalRequest = participationRepository.findById(requestId);
         if (optionalRequest.isEmpty()) {
@@ -155,7 +157,6 @@ public class ParticipationService {
                 .rejectedRequests(ParticipationDtoMapper.toParticipationRequestDtoList(rejected))
                 .build();
     }
-
 
 
     public Participation cancelParticipationRequest(long requestId, long userId) {
