@@ -14,11 +14,15 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-@Entity
+
 @Table(name = "events")
+@Builder
 @Getter
 @Setter
 @ToString
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
