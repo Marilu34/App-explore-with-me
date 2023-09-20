@@ -35,6 +35,7 @@ public class Participation {
 
     @Column(name = "status", nullable = false)
     private String status;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

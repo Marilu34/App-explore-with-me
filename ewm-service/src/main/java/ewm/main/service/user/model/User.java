@@ -22,6 +22,7 @@ public class User {
     private String name;
 
     private String email;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
