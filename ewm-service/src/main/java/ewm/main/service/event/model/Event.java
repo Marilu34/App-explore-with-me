@@ -1,6 +1,5 @@
 package ewm.main.service.event.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import ewm.main.service.category.model.Category;
 import ewm.main.service.common.models.State;
 import ewm.main.service.common.models.Location;
@@ -11,7 +10,6 @@ import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 
