@@ -7,11 +7,13 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
-@Entity
-@Table(name = "compilations")
+@Builder
 @Getter
 @Setter
-@ToString
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "compilations")
 public class Compilation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,17 +21,21 @@ public class Compilation {
     private long id;
 
     @ManyToMany(fetch = FetchType.LAZY,
-            cascade = {CascadeType.PERSIST,
-                    CascadeType.MERGE})
-    @JoinTable(name = "compilation_events",
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE
+            })
+    @JoinTable(
+            name = "compilation_events",
             joinColumns = @JoinColumn(name = "compilation_id"),
             inverseJoinColumns = @JoinColumn(name = "event_id"))
-    @Builder.Default
+
     private Set<Event> events = new HashSet<>();
 
     @Column(name = "pinned", nullable = false)
-    private boolean pinned;
+    private Boolean pinned;
 
     @Column(name = "title", length = 150, nullable = false)
     private String title;
 }
+
