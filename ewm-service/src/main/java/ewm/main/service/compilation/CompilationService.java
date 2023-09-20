@@ -4,7 +4,7 @@ import ewm.main.service.compilation.model.Compilation;
 import ewm.main.service.compilation.model.dto.ShortCompilationDto;
 import ewm.main.service.compilation.model.dto.CompilationRequest;
 import ewm.main.service.event.EventRepository;
-import ewm.main.service.exceptions.NotFoundException;
+import ewm.main.service.exceptions.CompilationNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -53,7 +53,7 @@ public class CompilationService {
     public Compilation getCompilationById(long compilationId) {
         Optional<Compilation> optionalCompilation = compilationRepository.findById(compilationId);
         if (optionalCompilation.isEmpty()) {
-            throw new NotFoundException("Компиляция " + compilationId + " не обнаружена");
+            throw new CompilationNotFoundException("Компиляция " + compilationId + " не обнаружена");
         } else {
             return optionalCompilation.get();
         }

@@ -28,6 +28,43 @@ public class ErrorHandler {
                 .build();
     }
 
+    @ExceptionHandler({CategoryNotFoundException.class,
+            CompilationNotFoundException.class,
+            EventNotFoundException.class,
+            UserNotFoundException.class,
+            ParticipationRequestNotFoundException.class})
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleNotFoundException(final RuntimeException e) {
+        log.info(e.getMessage());
+        return ErrorResponse.builder()
+                .status("NOT_FOUND")
+                .reason("error")
+                .message(e.getMessage())
+                .timestamp(LocalDateTime.now().format(Date.DATE_TIME_FORMATTER))
+                .build();
+    }
+
+    @ExceptionHandler({CategoryHaveLinkedEventsException.class,
+            CategoryNameNotUniqueException.class,
+            EventUpdateException.class,
+            ParticipationRequestDuplicationException.class,
+            ParticipationRequestEventNotPublishedException.class,
+            ParticipationRequestInitiatorException.class,
+            ParticipationRequestInvalidStateException.class,
+            ParticipationRequestLimitException.class,
+            ParticipationRequestLimitReachedException.class,
+            UserEmailNotUniqueException.class})
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handleUserEmailNotUniqueException(final RuntimeException e) {
+        log.info(e.getMessage());
+        return ErrorResponse.builder()
+                .status("CONFLICT")
+                .reason("error")
+                .message(e.getMessage())
+                .timestamp(LocalDateTime.now().format(Date.DATE_TIME_FORMATTER))
+                .build();
+    }
+
     @ExceptionHandler({NullPointerException.class,
             IllegalArgumentException.class,
             EntityNotFoundException.class})
@@ -41,34 +78,4 @@ public class ErrorHandler {
                 .timestamp(LocalDateTime.now().format(Date.DATE_TIME_FORMATTER))
                 .build();
     }
-
-    @ExceptionHandler({CategoryNotFoundException.class,
-            NotFoundException.class})
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleNotFoundException(final RuntimeException e) {
-        log.info(e.getMessage());
-        return ErrorResponse.builder()
-                .status("NOT_FOUND")
-                .reason("error")
-                .message(e.getMessage())
-                .timestamp(LocalDateTime.now().format(Date.DATE_TIME_FORMATTER))
-                .build();
-    }
-
-    @ExceptionHandler({CategoryException.class,
-            EventException.class,
-            ParticipationException.class,
-            UserException.class})
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleUserEmailNotUniqueException(final RuntimeException e) {
-        log.info(e.getMessage());
-        return ErrorResponse.builder()
-                .status("CONFLICT")
-                .reason("error")
-                .message(e.getMessage())
-                .timestamp(LocalDateTime.now().format(Date.DATE_TIME_FORMATTER))
-                .build();
-    }
-
-
 }
