@@ -1,81 +1,62 @@
 package ewm.main.service.error_handler;
 
-import ewm.main.service.common.Date;
-import ewm.main.service.exceptions.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import javax.persistence.EntityNotFoundException;
-import javax.validation.ValidationException;
-import java.time.LocalDateTime;
-
-@RestControllerAdvice
 @Slf4j
+@RestControllerAdvice
 public class ErrorHandler {
-
-    @ExceptionHandler({ValidationException.class})
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleValidationException(final RuntimeException e) {
-        log.info(e.getMessage());
-        return ErrorResponse.builder()
-                .status("BAD_REQUEST")
-                .reason("error")
-                .message(e.getMessage())
-                .timestamp(LocalDateTime.now().format(Date.DATE_TIME_FORMATTER))
-                .build();
-    }
-
-    @ExceptionHandler({CategoryNotFoundException.class,
-            CompilationNotFoundException.class,
-            EventNotFoundException.class,
-            UserNotFoundException.class,
-            ParticipationRequestNotFoundException.class})
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleNotFoundException(final RuntimeException e) {
-        log.info(e.getMessage());
-        return ErrorResponse.builder()
-                .status("NOT_FOUND")
-                .reason("error")
-                .message(e.getMessage())
-                .timestamp(LocalDateTime.now().format(Date.DATE_TIME_FORMATTER))
-                .build();
+    public ErrorResponse handleNotFoundException(final NotFoundException exception) {
+        log.warn(exception.getMessage(), exception);
+        return new ErrorResponse(exception.getMessage());
     }
 
-    @ExceptionHandler({CategoryHaveLinkedEventsException.class,
-            CategoryNameNotUniqueException.class,
-            EventUpdateException.class,
-            ParticipationRequestDuplicationException.class,
-            ParticipationRequestEventNotPublishedException.class,
-            ParticipationRequestInitiatorException.class,
-            ParticipationRequestInvalidStateException.class,
-            ParticipationRequestLimitException.class,
-            ParticipationRequestLimitReachedException.class,
-            UserEmailNotUniqueException.class})
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleUserEmailNotUniqueException(final RuntimeException e) {
-        log.info(e.getMessage());
-        return ErrorResponse.builder()
-                .status("CONFLICT")
-                .reason("error")
-                .message(e.getMessage())
-                .timestamp(LocalDateTime.now().format(Date.DATE_TIME_FORMATTER))
-                .build();
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleValidationException(final ValidationException exception) {
+        log.warn(exception.getMessage(), exception);
+        return new ErrorResponse(exception.getMessage());
     }
 
-    @ExceptionHandler({NullPointerException.class,
-            IllegalArgumentException.class,
-            EntityNotFoundException.class})
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse serverExceptionHandler(RuntimeException e) {
-        log.info(e.getMessage(), e);
-        return ErrorResponse.builder()
-                .status("NOT_FOUND")
-                .reason("Внутренняя ошибка сервера")
-                .message(e.getMessage())
-                .timestamp(LocalDateTime.now().format(Date.DATE_TIME_FORMATTER))
-                .build();
+    public ErrorResponse handleThrowable(final Throwable exception) {
+        log.warn(exception.getMessage(), exception);
+        return new ErrorResponse(exception.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleMethodArgumentNotValidException(final MethodArgumentNotValidException exception) {
+        log.warn(exception.getMessage(), exception);
+        return new ErrorResponse(exception.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handleMethodArgumentConflictException(final ConflictException exception) {
+        log.warn(exception.getMessage(), exception);
+        return new ErrorResponse(exception.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handleAlreadyExistsException(final AlreadyExistsException exception) {
+        log.warn(exception.getMessage(), exception);
+        return new ErrorResponse(exception.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handleDataIntegrityViolationException(final DataIntegrityViolationException exception) {
+        log.warn(exception.getMessage(), exception);
+        return new ErrorResponse(exception.getMessage());
     }
 }

@@ -3,12 +3,13 @@ package ewm.main.service.event;
 import ewm.main.service.category.CategoryRepository;
 import ewm.main.service.common.Date;
 import ewm.main.service.common.models.State;
+import ewm.main.service.error_handler.ConflictException;
+import ewm.main.service.error_handler.NotFoundException;
+import ewm.main.service.error_handler.ValidationException;
 import ewm.main.service.event.model.Event;
 import ewm.main.service.event.model.dto.EventAdminRequest;
 import ewm.main.service.event.model.dto.EventDtoUpdated;
 import ewm.main.service.event.model.dto.EventUserRequest;
-import ewm.main.service.exceptions.EventNotFoundException;
-import ewm.main.service.exceptions.EventUpdateException;
 import ewm.main.service.user.UserService;
 import ewm.stats.client.StatClient;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +32,7 @@ public class EventService {
     public Event getEventById(long eventId) {
         Optional<Event> optionalEvent = eventRepository.findById(eventId);
         if (optionalEvent.isEmpty()) {
-            throw new EventNotFoundException("Событие " + eventId + " не найдено");
+            throw new NotFoundException("Событие " + eventId + " не найдено");
         } else {
             return optionalEvent.get();
         }
@@ -41,7 +42,7 @@ public class EventService {
         Event event = getEventById(eventId);
         //событие должно быть опубликовано
         if (event.getState() != State.PUBLISHED) {
-            throw new EventNotFoundException("Событие " + eventId + " не найдено");
+            throw new NotFoundException("Событие " + eventId + " не найдено");
         }
 
         //информацию о том, что по этому эндпоинту был осуществлен и обработан запрос, нужно сохранить в сервисе статистики
@@ -86,7 +87,7 @@ public class EventService {
         //событие можно отклонить, только если оно еще не опубликовано (Ожидается код ошибки 409)
         if (updateRequest.getStateAction() != null && "REJECT_EVENT".equals(updateRequest.getStateAction())) {
             if (storageEvent.getState() != State.PENDING) {
-                throw new EventUpdateException("Cannot cancel the event because it's not in the right state: " + storageEvent.getState().toString());
+                throw new ConflictException("Не удается отменить событие, потому что оно находится в неправильном состоянии: " + storageEvent.getState().toString());
             } else {
                 storageEvent.setState(State.CANCELED);
             }
@@ -95,7 +96,7 @@ public class EventService {
         //событие можно публиковать, только если оно в состоянии ожидания публикации (Ожидается код ошибки 409)
         if (updateRequest.getStateAction() != null && "PUBLISH_EVENT".equals(updateRequest.getStateAction())) {
             if (storageEvent.getState() != State.PENDING) {
-                throw new EventUpdateException("Cannot publish the event because it's not in the right state: " + storageEvent.getState().toString());
+                throw new ConflictException("Не удается отменить событие, потому что оно находится в неправильном состоянии: " + storageEvent.getState().toString());
             } else {
                 storageEvent.setState(State.PUBLISHED);
                 storageEvent.setPublishedOn(LocalDateTime.now());
@@ -106,7 +107,7 @@ public class EventService {
         if (updateRequest.getEventDate() != null) {
             LocalDateTime newEventDate = LocalDateTime.parse(updateRequest.getEventDate(), Date.DATE_TIME_FORMATTER);
             if (newEventDate.isBefore(LocalDateTime.now().plusHours(1))) {
-                throw new EventUpdateException("Дата начала изменяемого события должна быть не ранее чем за час от даты публикации");
+                throw new ConflictException("Дата начала изменяемого события должна быть не ранее чем за час от даты публикации");
             } else {
                 storageEvent.setEventDate(newEventDate);
             }
@@ -153,9 +154,8 @@ public class EventService {
     }
 
     public Event createEvent(EventDtoUpdated newEventDto, long userId) {
-        //дата начала изменяемого события должна быть не ранее чем за два часа от даты публикации. (Ожидается код ошибки 409)
         if (LocalDateTime.parse(newEventDto.getEventDate(), Date.DATE_TIME_FORMATTER).isBefore(LocalDateTime.now().plusHours(2))) {
-            throw new EventUpdateException("Дата начала изменяемого события должна быть не ранее чем за два часа от даты публикации");
+            throw new ValidationException("Дата начала изменяемого события должна быть не ранее чем за два часа от даты публикации");
         }
 
         Event event = Event.builder()
@@ -180,18 +180,21 @@ public class EventService {
     public Event getEventByIdAndInitiatorId(long eventId, long initiatorId) {
         Optional<Event> optionalEvent = eventRepository.findByIdAndInitiator_id(eventId, initiatorId);
         if (optionalEvent.isEmpty()) {
-            throw new EventNotFoundException("Событие " + eventId + " не найдено или недоступно");
+            throw new NotFoundException("Событие " + eventId + " не найдено или недоступно");
         } else {
             return optionalEvent.get();
         }
     }
 
     public Event updateEventByInitiator(EventUserRequest eventRequest, long eventId, long initiatorId) {
-        Event storageEvent = getEventByIdAndInitiatorId(eventId, initiatorId);
-
+   Event storageEvent = getEventByIdAndInitiatorId(eventId, initiatorId);
         //изменить можно только отмененные события или события в состоянии ожидания модерации (Ожидается код ошибки 409)
+
+        if (eventId == 0) {
+            throw new ValidationException("Для создания запроса необходимо указать событие.");
+        }
         if (storageEvent.getState() == State.PUBLISHED) {
-            throw new EventUpdateException("Изменить можно только отмененные события или события в состоянии ожидания модерации");
+            throw new ConflictException("Изменить можно только отмененные события или события в состоянии ожидания модерации");
         }
 
         //поиск и проверка изменяемых полей
@@ -212,7 +215,7 @@ public class EventService {
 
             //дата начала изменяемого события должна быть не ранее чем за два часа от даты публикации. (Ожидается код ошибки 409)
             if (eventRequestDate.isBefore(LocalDateTime.now().plusHours(2))) {
-                throw new EventUpdateException("Дата начала изменяемого события должна быть не ранее чем за два часа от даты публикации");
+                throw new ValidationException("Дата начала изменяемого события должна быть не ранее чем за два часа от даты публикации");
             }
 
             storageEvent.setEventDate(eventRequestDate);

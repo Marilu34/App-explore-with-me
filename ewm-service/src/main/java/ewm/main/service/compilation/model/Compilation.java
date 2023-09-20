@@ -1,20 +1,19 @@
 package ewm.main.service.compilation.model;
 
 import ewm.main.service.event.model.Event;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
-@Data
+@Getter
 @NoArgsConstructor
+@Setter
 @AllArgsConstructor
 @Builder
 @Entity
+@ToString
 @Table(name = "compilations")
 public class Compilation {
     @Id

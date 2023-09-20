@@ -1,17 +1,18 @@
 package ewm.main.service.category.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
+import java.util.Objects;
 
-@Data
+
+@Getter
 @NoArgsConstructor
+@Setter
 @AllArgsConstructor
 @Builder
 @Entity
+@ToString
 @Table(name = "categories")
 public class Category {
     @Id
@@ -21,4 +22,16 @@ public class Category {
 
     @Column(name = "category_name", nullable = false)
     private String name;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Category category = (Category) o;
+        return Objects.equals(id, category.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

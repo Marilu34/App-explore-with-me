@@ -1,8 +1,8 @@
 package ewm.main.service.user;
 
 
-import ewm.main.service.exceptions.UserEmailNotUniqueException;
-import ewm.main.service.exceptions.UserNotFoundException;
+import ewm.main.service.error_handler.AlreadyExistsException;
+import ewm.main.service.error_handler.NotFoundException;
 import ewm.main.service.user.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -22,7 +22,7 @@ public class UserService {
         try {
             storageUser = userRepository.save(user);
         } catch (DataIntegrityViolationException e) {
-            throw new UserEmailNotUniqueException("E-mail уже существует");
+            throw new AlreadyExistsException("E-mail уже существует");
         }
 
         return storageUser;
@@ -31,7 +31,7 @@ public class UserService {
     public User getUserById(long userId) {
         Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isEmpty()) {
-            throw new UserNotFoundException("Пользователь " + userId + " не найден");
+            throw new NotFoundException("Пользователь " + userId + " не найден");
         } else {
             return optionalUser.get();
         }

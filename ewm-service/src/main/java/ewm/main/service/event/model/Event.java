@@ -11,13 +11,16 @@ import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
-@Data
+@Getter
 @NoArgsConstructor
+@Setter
 @AllArgsConstructor
 @Builder
 @Entity
+@ToString
 @Table(name = "events")
 public class Event {
     @Id
@@ -83,4 +86,17 @@ public class Event {
     @JsonIgnore
     @EqualsAndHashCode.Exclude
     private Set<Compilation> compilations = new HashSet<>();
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Event)) return false;
+        Event event = (Event) o;
+        return Objects.equals(getId(), event.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
+    }
 }

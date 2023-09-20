@@ -2,10 +2,11 @@ package ewm.main.service.participation;
 
 import ewm.main.service.common.models.State;
 import ewm.main.service.common.models.Status;
+import ewm.main.service.error_handler.ConflictException;
+import ewm.main.service.error_handler.NotFoundException;
 import ewm.main.service.event.EventRepository;
 import ewm.main.service.event.EventService;
 import ewm.main.service.event.model.Event;
-import ewm.main.service.exceptions.*;
 import ewm.main.service.participation.model.Participation;
 import ewm.main.service.participation.model.dto.EventRequestQuery;
 import ewm.main.service.participation.model.dto.EventRequestResponse;
@@ -33,23 +34,23 @@ public class ParticipationService {
 
         //инициатор события не может добавить запрос на участие в своём событии (Ожидается код ошибки 409)
         if (event.getInitiator().getId() == requesterId) {
-            throw new ParticipationRequestInitiatorException("Инициатор события " + eventId + "не может добавить запрос на участие в своём событии");
+            throw new ConflictException("Инициатор события " + eventId + "не может добавить запрос на участие в своём событии");
         }
 
         //нельзя участвовать в неопубликованном событии (Ожидается код ошибки 409)
         if (event.getState() != State.PUBLISHED) {
-            throw new ParticipationRequestEventNotPublishedException("Событие " + eventId + "не опубликовано");
+            throw new ConflictException("Событие " + eventId + "не опубликовано");
         }
 
         //нельзя добавить повторный запрос (Ожидается код ошибки 409)
         Participation oldRequest = getRequestByEventIdAndRequesterId(eventId, requesterId);
         if (oldRequest != null) {
-            throw new ParticipationRequestDuplicationException("Нельзя добавить повторный запрос в событие" + eventId);
+            throw new ConflictException("Нельзя добавить повторный запрос в событие" + eventId);
         }
 
         //если у события достигнут лимит запросов на участие - необходимо вернуть ошибку (Ожидается код ошибки 409)
         if (event.getParticipantLimit() > 0 && event.getConfirmedRequests() >= event.getParticipantLimit()) {
-            throw new ParticipationRequestLimitReachedException("Достигнут лимит запросов на участие в событии " + eventId);
+            throw new ConflictException("Достигнут лимит запросов на участие в событии " + eventId);
         }
 
         //если для события отключена пре-модерация запросов на участие, то запрос должен автоматически перейти в состояние подтвержденного
@@ -85,7 +86,7 @@ public class ParticipationService {
             if ("CONFIRMED".equals(newStatus)) {
                 //нельзя подтвердить заявку, если уже достигнут лимит по заявкам на данное событие (Ожидается код ошибки 409)
                 if (confirmedRequests >= participantLimit) {
-                    throw new ParticipationRequestLimitException("Достигнут лимит по заявкам на событие " + eventId);
+                    throw new ConflictException("Достигнут лимит по заявкам на событие " + eventId);
                 }
             }
 
@@ -114,7 +115,7 @@ public class ParticipationService {
                         participationRepository.save(storageRequest);
                     }
                 } else {
-                    throw new ParticipationRequestInvalidStateException("Неверное состояние заявки " + requestId + " перед модерацией");
+                    throw new ConflictException("Неверное состояние заявки " + requestId + " перед модерацией");
                 }
             }
         }
@@ -130,7 +131,7 @@ public class ParticipationService {
     public Participation getRequestById(long requestId) {
         Optional<Participation> optionalRequest = participationRepository.findById(requestId);
         if (optionalRequest.isEmpty()) {
-            throw new ParticipationRequestNotFoundException("Запрос " + requestId + " не найден");
+            throw new NotFoundException("Запрос " + requestId + " не найден");
         } else {
             return optionalRequest.get();
         }
@@ -177,7 +178,7 @@ public class ParticipationService {
     public Participation cancelParticipationRequest(long requestId, long userId) {
         Participation request = getRequestById(requestId);
         if (request.getUser().getId() != userId) {
-            throw new ParticipationRequestNotFoundException("Запрос " + requestId + " не найден");
+            throw new NotFoundException("Запрос " + requestId + " не найден");
         }
 
         String oldStatus = request.getStatus();

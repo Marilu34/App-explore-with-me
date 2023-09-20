@@ -2,19 +2,19 @@ package ewm.main.service.participation.model;
 
 import ewm.main.service.event.model.Event;
 import ewm.main.service.user.model.User;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
-@Data
+@Getter
 @NoArgsConstructor
+@Setter
 @AllArgsConstructor
 @Builder
 @Entity
+@ToString
 @Table(name = "participation_requests")
 public class Participation {
     @Id
@@ -35,4 +35,17 @@ public class Participation {
 
     @Column(name = "status", nullable = false)
     private String status;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Event)) return false;
+        Event event = (Event) o;
+        return Objects.equals(getId(), event.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
+    }
+
 }
