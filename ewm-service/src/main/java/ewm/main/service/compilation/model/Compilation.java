@@ -7,14 +7,11 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
-@Getter
-@NoArgsConstructor
-@Setter
-@AllArgsConstructor
-@Builder
 @Entity
-@ToString
 @Table(name = "compilations")
+@Getter
+@Setter
+@ToString
 public class Compilation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,12 +24,12 @@ public class Compilation {
     @JoinTable(name = "compilation_events",
             joinColumns = @JoinColumn(name = "compilation_id"),
             inverseJoinColumns = @JoinColumn(name = "event_id"))
-    @Builder.Default
+
     private Set<Event> events = new HashSet<>();
 
     @Column(name = "pinned", nullable = false)
-    private Boolean pinned;
+    private boolean pinned;
 
-    @Column(name = "title", nullable = false)
+    @Column(name = "title", length = 150, nullable = false)
     private String title;
 }

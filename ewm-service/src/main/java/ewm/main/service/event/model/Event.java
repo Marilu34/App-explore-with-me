@@ -14,14 +14,11 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-@Getter
-@NoArgsConstructor
-@Setter
-@AllArgsConstructor
-@Builder
 @Entity
-@ToString
 @Table(name = "events")
+@Getter
+@Setter
+@ToString
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -74,7 +71,7 @@ public class Event {
     @Column(name = "state", nullable = false)
     private State state;
 
-    @Column(name = "title", nullable = false)
+    @Column(name = "title", length = 120, nullable = false)
     private String title;
 
     @Column(name = "views", nullable = false)
@@ -83,20 +80,8 @@ public class Event {
     @ManyToMany(fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST,
                     CascadeType.MERGE}, mappedBy = "events")
-    @JsonIgnore
+
     @EqualsAndHashCode.Exclude
     private Set<Compilation> compilations = new HashSet<>();
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Event)) return false;
-        Event event = (Event) o;
-        return Objects.equals(getId(), event.getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId());
-    }
 }

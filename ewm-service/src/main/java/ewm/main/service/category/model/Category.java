@@ -6,12 +6,9 @@ import javax.persistence.*;
 import java.util.Objects;
 
 
-@Getter
-@NoArgsConstructor
-@Setter
-@AllArgsConstructor
-@Builder
 @Entity
+@Getter
+@Setter
 @ToString
 @Table(name = "categories")
 public class Category {
@@ -20,7 +17,7 @@ public class Category {
     @Column(name = "category_id", nullable = false)
     private long id;
 
-    @Column(name = "category_name", nullable = false)
+    @Column(name = "category_name",  length = 50, unique = true, nullable = false)
     private String name;
 
     @Override

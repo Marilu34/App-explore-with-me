@@ -5,14 +5,11 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.Objects;
 
-@Getter
-@NoArgsConstructor
-@Setter
-@AllArgsConstructor
-@Builder
 @Entity
-@ToString
 @Table(name = "users")
+@Getter
+@Setter
+@ToString
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,19 +17,7 @@ public class User {
     private long id;
 
     private String name;
-
+    @Column(name = "email", length = 254, unique = true, nullable = false)
     private String email;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof User)) return false;
-        User event = (User) o;
-        return Objects.equals(getId(), event.getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId());
-    }
 }
