@@ -1,43 +1,48 @@
 version: '3.8'
 services:
-  ewm-service:
-    container_name: ewm-service
-    build: ewm-main-service
-    ports:
-      - "8080:8080"
-    depends_on:
-      - db
-      - stats-server
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db/postgres
-
-
   stats-server:
-    container_name: stats-server
-    build: ewm-stat-service
+    build: ./stat-service/stat-server
+    container_name: ewm-stat-server
     ports:
       - "9090:9090"
     depends_on:
-      - db2
+      - stats-db
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db2/postgres
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/ewmstatsdb
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgrespw
+      - SPRING_PROFILES_ACTIVE=dev
 
-  db:
-    container_name: db
-    image: postgres:15-alpine
+  stats-db:
+    image: postgres:14-alpine
+    container_name: ewm-stats-db
     ports:
-      - "5442:5432"
+      - "6541:5432"
     environment:
-      - POSTGRES_DB=postgres
+      - POSTGRES_DB=ewmstatsdb
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_PASSWORD=postgrespw
 
-  db2:
-    container_name: db2
-    image: postgres:15-alpine
+  ewm-service:
+    build: ./ewm-service
+    container_name: ewm-main-server
     ports:
-      - "5443:5432"
+      - "8080:8080"
+    depends_on:
+      - ewm-db
     environment:
-      - POSTGRES_DB=postgres
+      - STAT_SERVER_URL=http://ewm-stat-server:9090
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/ewmmaindb
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgrespw
+      - SPRING_PROFILES_ACTIVE=dev
+
+  ewm-db:
+    image: postgres:14-alpine
+    container_name: ewm-main-db
+    ports:
+      - "6542:5432"
+    environment:
+      - POSTGRES_DB=ewmmaindb
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_PASSWORD=postgrespw
