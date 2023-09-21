@@ -4,38 +4,24 @@ import ewm.main.service.event.model.Event;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
+import javax.validation.constraints.NotNull;
+import java.util.List;
 
-@Builder
-@Getter
-@Setter
 @Entity
+@Table(name = "compilation")
+@Setter
+@Getter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "compilations")
 public class Compilation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "compilation_id", nullable = false)
-    private long id;
-
-    @ManyToMany(fetch = FetchType.LAZY,
-            cascade = {
-                    CascadeType.PERSIST,
-                    CascadeType.MERGE
-            })
-    @JoinTable(
-            name = "compilation_events",
-            joinColumns = @JoinColumn(name = "compilation_id"),
-            inverseJoinColumns = @JoinColumn(name = "event_id"))
-
-    private Set<Event> events = new HashSet<>();
-
-    @Column(name = "pinned", nullable = false)
+    private Long id;
     private Boolean pinned;
-
-    @Column(name = "title", length = 150, nullable = false)
+    @NotNull
     private String title;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "compilation_events", joinColumns = @JoinColumn(name = "id"), inverseJoinColumns = @JoinColumn(name = "event_id"))
+    private List<Event> events;
 }
-

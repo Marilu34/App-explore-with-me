@@ -1,15 +1,15 @@
 package ewm.main.service.category.model.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-
-import javax.validation.constraints.NotEmpty;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-public class CategoryDto {
-    private long id;
-
-    @NotEmpty
-    private String name;
+@NoArgsConstructor(force = true)
+@AllArgsConstructor
+public final class CategoryDto {
+    private final Long id;
+    private final String name;
 }
