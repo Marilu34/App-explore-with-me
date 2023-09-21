@@ -26,7 +26,7 @@ services:
       - POSTGRES_PASSWORD=iamroot
 
   ewm-service:
-    build: ewm
+    build: ewm-service
     image: ewm-service
     container_name: ewm-service-container
     ports:
