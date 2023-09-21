@@ -1,48 +1,54 @@
-version: '3.8'
+version: '3.1'
 services:
   stats-server:
-    build: ./stat-service/stat-server
-    container_name: ewm-stat-server
+    build: stat-service/stat-server
+    image: stat-server
+    container_name: stat-server-container
     ports:
       - "9090:9090"
     depends_on:
-      - stats-db
+      - stat-db
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/ewmstatsdb
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=postgrespw
-      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://stat-db:5432/postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=iamroot
 
   stats-db:
     image: postgres:14-alpine
-    container_name: ewm-stats-db
+    container_name: stat-db-container
+    volumes:
+      - /var/lib/postgresql/postgres/
     ports:
-      - "6541:5432"
+      - "6543:5432"
     environment:
-      - POSTGRES_DB=ewmstatsdb
+      - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgrespw
+      - POSTGRES_PASSWORD=iamroot
 
   ewm-service:
-    build: ./ewm-service
-    container_name: ewm-main-server
+    build: ewm
+    image: ewm-service
+    container_name: ewm-service-container
     ports:
       - "8080:8080"
     depends_on:
       - ewm-db
+      - stat-service
+
     environment:
-      - STAT_SERVER_URL=http://ewm-stat-server:9090
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/ewmmaindb
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=postgrespw
-      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/ewm-db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=iamroot
+      - STATS_URL=http://stat-server:9090
 
   ewm-db:
     image: postgres:14-alpine
-    container_name: ewm-main-db
+    container_name: ewm-db-container
+    volumes:
+      - /var/lib/postgresql/ewm-db/
     ports:
-      - "6542:5432"
+      - "6541:5432"
     environment:
-      - POSTGRES_DB=ewmmaindb
+      - POSTGRES_DB=ewm-db
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgrespw
+      - POSTGRES_PASSWORD=iamroot
