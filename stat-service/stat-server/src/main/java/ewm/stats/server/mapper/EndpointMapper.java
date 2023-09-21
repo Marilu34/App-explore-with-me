@@ -3,6 +3,7 @@ package ewm.stats.server.mapper;
 import ewm.stats.dto.EndpointDto;
 import ewm.stats.server.model.Endpoint;
 import lombok.experimental.UtilityClass;
+
 @UtilityClass
 public class EndpointMapper {
 
