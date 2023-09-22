@@ -16,12 +16,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class Event {
     @Id
-    @Column(name = "event_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "title", length = 120)
     private String title;
-    @Column(name = "annotation", nullable = false, length = 2000)
     private String annotation;
     private Long views;
     private String description;

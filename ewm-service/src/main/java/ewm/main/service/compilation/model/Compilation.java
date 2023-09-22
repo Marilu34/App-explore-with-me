@@ -4,6 +4,7 @@ import ewm.main.service.event.model.Event;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity
@@ -18,7 +19,7 @@ public class Compilation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Boolean pinned;
-    @Column(name = "title", length = 150)
+    @NotNull
     private String title;
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "compilation_events", joinColumns = @JoinColumn(name = "id"), inverseJoinColumns = @JoinColumn(name = "event_id"))

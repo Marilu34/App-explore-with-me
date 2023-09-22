@@ -15,6 +15,12 @@ import javax.validation.ValidationException;
 @Slf4j
 public class ExceptionsHandler {
 
+    @ExceptionHandler({ValidationException.class, ConstraintViolationException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse validException(ValidationException e) {
+        return new ErrorResponse(e.getMessage());
+    }
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleAbsenceException(NotFoundException e) {
@@ -36,12 +42,6 @@ public class ExceptionsHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleParticipationRequestFailException(ParticipationRequestFailException e) {
-        return new ErrorResponse(e.getMessage());
-    }
-
-    @ExceptionHandler({ValidationException.class, ConstraintViolationException.class})
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse validException(ValidationException e) {
         return new ErrorResponse(e.getMessage());
     }
 
