@@ -5,6 +5,7 @@ import ewm.main.service.common.models.Location;
 import ewm.main.service.user.model.dto.UserShortDto;
 import lombok.Builder;
 import lombok.Data;
+
 @Data
 @Builder
 public class EventFullDto {

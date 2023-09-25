@@ -4,6 +4,7 @@ import ewm.main.service.category.model.dto.CategoryDto;
 import ewm.main.service.user.model.dto.UserShortDto;
 import lombok.Builder;
 import lombok.Data;
+
 @Data
 @Builder
 public class EventShortDto {

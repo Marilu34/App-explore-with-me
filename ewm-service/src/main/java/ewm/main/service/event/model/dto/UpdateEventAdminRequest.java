@@ -2,6 +2,7 @@ package ewm.main.service.event.model.dto;
 
 import ewm.main.service.common.models.Location;
 import lombok.Data;
+
 @Data
 public class UpdateEventAdminRequest {
     private String annotation;
