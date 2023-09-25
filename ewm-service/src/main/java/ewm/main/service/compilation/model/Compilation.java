@@ -1,27 +1,42 @@
 package ewm.main.service.compilation.model;
 
 import ewm.main.service.event.model.Event;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
-@Entity
-@Table(name = "compilation")
-@Setter
-@Getter
-@Builder
-@AllArgsConstructor
+@Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Entity
+@Table(name = "compilations")
 public class Compilation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "compilation_id", nullable = false)
+    private long id;
+
+    @ManyToMany(fetch = FetchType.LAZY,
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE
+            })
+    @JoinTable(
+            name = "compilation_events",
+            joinColumns = @JoinColumn(name = "compilation_id"),
+            inverseJoinColumns = @JoinColumn(name = "event_id"))
+    @Builder.Default
+    private Set<Event> events = new HashSet<>();
+
+    @Column(name = "pinned", nullable = false)
     private Boolean pinned;
-    @NotNull
+
+    @Column(name = "title", nullable = false)
     private String title;
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "compilation_events", joinColumns = @JoinColumn(name = "id"), inverseJoinColumns = @JoinColumn(name = "event_id"))
-    private List<Event> events;
 }

@@ -1,12 +1,12 @@
 package ewm.stats.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 @Data
 @AllArgsConstructor
-@Builder
-public final class ViewStatsDto {
-    private final String app;
-    private final String uri;
-    private final Long hits;
+public class ViewStatsDto {
+    private String app;
+    private String uri;
+    private long hits;
 }
