@@ -13,7 +13,7 @@ import javax.validation.ValidationException;
 
 @RestControllerAdvice
 @Slf4j
-public class ExceptionsHandler {
+public class ErrorHandler {
 
     @ExceptionHandler({ValidationException.class, ConstraintViolationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)

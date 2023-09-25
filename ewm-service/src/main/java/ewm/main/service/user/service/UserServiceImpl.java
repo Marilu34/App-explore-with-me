@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,7 +27,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDto addUser(NewUserRequest newUserRequest) {
+    public UserDto addUser(@NotNull NewUserRequest newUserRequest) {
         if (userRepository.existsByEmail(newUserRequest.getEmail())) {
             throw new EmailExistsEmail("Email exists");
         }
@@ -49,7 +50,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void deleteUser(Long userId) {
+    public void deleteUser(@NotNull Long userId) {
         userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not exists"));
         userRepository.deleteById(userId);
     }

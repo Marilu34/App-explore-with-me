@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,7 +35,7 @@ public class ParticipationServiceImpl implements ParticipationService {
 
     @Override
     @Transactional
-    public ParticipationRequestDto addRequest(Long userId, Long eventId) {
+    public ParticipationRequestDto addRequest(@NotNull Long userId, @NotNull Long eventId) {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new ParticipationRequestFailException("Event exists"));
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not exists"));
         if (participationRepository.existsByRequesterIdAndEventId(userId, eventId)) {
@@ -61,7 +62,7 @@ public class ParticipationServiceImpl implements ParticipationService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ParticipationRequestDto> getUserRequest(Long userId) {
+    public List<ParticipationRequestDto> getUserRequest(@NotNull Long userId) {
         userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not exists"));
         return participationRepository.findAllByRequesterId(userId).stream().map(ParticipationMapper::toParticipationEventDto)
                 .collect(Collectors.toList());
@@ -69,7 +70,7 @@ public class ParticipationServiceImpl implements ParticipationService {
 
     @Override
     @Transactional
-    public ParticipationRequestDto cancelRequest(Long userId, Long requestId) {
+    public ParticipationRequestDto cancelRequest(@NotNull Long userId, @NotNull Long requestId) {
         userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not exists"));
         participationRepository.findById(requestId).orElseThrow(() -> new NotFoundException("Request not exists"));
         ParticipationRequest participationRequest = participationRepository.findByRequesterIdAndId(userId, requestId)
@@ -80,7 +81,7 @@ public class ParticipationServiceImpl implements ParticipationService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ParticipationRequestDto> getEventParticipants(Long userId, Long eventId) {
+    public List<ParticipationRequestDto> getEventParticipants(@NotNull Long userId, @NotNull Long eventId) {
         userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not exists"));
         eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException("Event not exists"));
         return participationRepository.findAllByEventId(eventId).stream().map(ParticipationMapper::toParticipationEventDto)
@@ -89,7 +90,7 @@ public class ParticipationServiceImpl implements ParticipationService {
 
     @Override
     @Transactional
-    public EventRequestResponse changeRequestStatus(Long userId, Long eventId, EventRequestQuery eventRequestQuery) {
+    public EventRequestResponse changeRequestStatus(@NotNull Long userId,@NotNull  Long eventId,@NotNull  EventRequestQuery eventRequestQuery) {
         userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not exists"));
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException("Event not exists"));
         Long alreadyConfirmed = participationRepository.findConfirmed(eventId);

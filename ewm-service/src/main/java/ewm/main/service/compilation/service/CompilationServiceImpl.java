@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,7 +28,7 @@ public class CompilationServiceImpl implements CompilationService {
 
     @Override
     @Transactional
-    public CompilationDto createCompilation(NewCompilationDto newCompilationDto) {
+    public CompilationDto createCompilation( NewCompilationDto newCompilationDto) {
         List<Event> events = eventRepository.findAllByIdIn(newCompilationDto.getEvents());
         Compilation compilation = CompilationMapper.toCompilation(newCompilationDto, events);
         return CompilationMapper.toCompilationDto(compilationRepository.save(compilation));
@@ -35,7 +36,7 @@ public class CompilationServiceImpl implements CompilationService {
 
     @Override
     @Transactional
-    public CompilationDto updateCompilation(Long compilationId, NewCompilationDto newCompilationDto) {
+    public CompilationDto updateCompilation(@NotNull Long compilationId,@NotNull NewCompilationDto newCompilationDto) {
         Compilation updateCompilation = compilationRepository.findById(compilationId)
                 .orElseThrow(() -> new NotFoundException("Compilation not exist"));
         List<Event> events = eventRepository.findAllByIdIn(newCompilationDto.getEvents());
@@ -45,14 +46,14 @@ public class CompilationServiceImpl implements CompilationService {
 
     @Override
     @Transactional(readOnly = true)
-    public CompilationDto getCompilation(Long compilationId) {
+    public CompilationDto getCompilation(@NotNull Long compilationId) {
         return CompilationMapper.toCompilationDto(compilationRepository.findById(compilationId)
                 .orElseThrow(() -> new NotFoundException("Compilation with id %d does not exist")));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<CompilationDto> getAllCompilations(Boolean pinned, int from, int size) {
+    public List<CompilationDto> getAllCompilations(@NotNull Boolean pinned, int from, int size) {
         Pageable pageable = PageRequest.of(from / size, size);
         return compilationRepository.findAll(new CompilationBase(pinned), pageable).stream()
                 .map(CompilationMapper::toCompilationDto)
@@ -61,7 +62,7 @@ public class CompilationServiceImpl implements CompilationService {
 
     @Override
     @Transactional
-    public void deleteCompilation(Long compilationId) {
+    public void deleteCompilation(@NotNull Long compilationId) {
         compilationRepository.findById(compilationId).orElseThrow(() -> new NotFoundException("Compilation not exists"));
         compilationRepository.deleteById(compilationId);
     }

@@ -27,6 +27,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.ValidationException;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
@@ -47,8 +49,8 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional
-    public EventDto createEvent(Long userId, NewEventDto newEventDto) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь не существует"));
+    public EventDto createEvent(@NotNull Long userId, NewEventDto newEventDto) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new ValidationException("Пользователь не существует"));
         Category category = categoryRepository.findById(newEventDto.getCategory()).orElseThrow(() -> new NotFoundException("Категория не существует"));
         Event event = EventMapper.toEvent(newEventDto, user, category);
         event.setState(EventState.PENDING);
@@ -58,8 +60,8 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional
-    public EventDto updateEventAdmin(Long eventId, UpdateEventDto updateEventDto) {
-        Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException("Мероприятие не существует"));
+    public EventDto updateEventAdmin(@NotNull Long eventId, UpdateEventDto updateEventDto) {
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new ValidationException("Мероприятие не существует"));
         if (event.getState().equals(EventState.PUBLISHED) || event.getState().equals(EventState.REJECT_EVENT)) {
             throw new WrongEventStateException("Ошибка! Мероприятие не обнаружено");
         }
@@ -83,8 +85,8 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional
-    public EventDto updateEvent(Long userId, Long eventId, UpdateEventDto updateEventDto) {
-        userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь не существует"));
+    public EventDto updateEvent(@NotNull Long userId,@NotNull Long eventId, UpdateEventDto updateEventDto) {
+        userRepository.findById(userId).orElseThrow(() -> new ValidationException("Пользователь не существует"));
 
         Event event = eventRepository.findAllByIdAndInitiatorId(eventId, userId)
                 .orElseThrow(() -> new NotFoundException("Мероприятие не обнаружено"));
@@ -124,7 +126,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<EventDto> getAdminEvent(Admin admin) {
+    public List<EventDto> getAdminEvent(@NotNull Admin admin) {
         if (admin.getRangeStart() != null && admin.getRangeEnd() != null && admin.getRangeStart().isAfter(admin.getRangeEnd())) {
             throw new EventWrongTimeException("неправильное время мероприятия");
         }
@@ -164,7 +166,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<EventShortDto> getUserEvents(Long userId, int from, int size) {
+    public List<EventShortDto> getUserEvents(@NotNull  Long userId, int from, int size) {
         userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь не существует"));
 
         Pageable pageable = PageRequest.of(from / size, size);
@@ -181,7 +183,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional(readOnly = true)
-    public EventDto getEventById(Long id, String ip) {
+    public EventDto getEventById(@NotNull Long id, @NotNull String ip) {
         Event event = eventRepository.findPublishedEventById(id)
                 .orElseThrow(() -> new NotFoundException("Опубликованные события не существуют"));
 
@@ -201,7 +203,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional(readOnly = true)
-    public EventDto getUserEventById(Long userId, Long eventId) {
+    public EventDto getUserEventById(@NotNull Long userId, @NotNull Long eventId) {
         userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь не существует"));
         Event event = eventRepository.findAllByIdAndInitiatorId(eventId, userId)
                 .orElseThrow(() -> new NotFoundException("Мероприятие не обнаружено"));
@@ -215,7 +217,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional
-    public List<EventDto> getEvents(Public publicEvents) {
+    public List<EventDto> getEvents(@NotNull Public publicEvents) {
         if (publicEvents.getRangeStart() != null && publicEvents.getRangeEnd() != null && publicEvents.getRangeStart().isAfter(publicEvents.getRangeEnd())) {
             throw new EventWrongTimeException("Неправильное время события");
         }

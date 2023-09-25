@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,7 +37,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
-    public void deleteCategory(Long categoryId) {
+    public void deleteCategory(@NotNull Long categoryId) {
         categoryRepository.findById(categoryId).orElseThrow(() -> new NotFoundException("Category not exists"));
         if (eventRepository.existsByCategoryId(categoryId)) {
             throw new CategoryDeleteException("Категория уже используется в мероприятиях");
@@ -46,7 +47,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
-    public CategoryDto updateCategory(Long categoryId, ShortCategoryDto shortCategoryDto) {
+    public CategoryDto updateCategory(@NotNull Long categoryId, @NotNull ShortCategoryDto shortCategoryDto) {
         categoryRepository.findById(categoryId).orElseThrow(() -> new NotFoundException("Category not exists"));
         if (categoryRepository.existsByNameAndIdNot(shortCategoryDto.getName(), categoryId)) {
             throw new NameExistsException("такое имя уже существует");
@@ -63,7 +64,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional(readOnly = true)
-    public CategoryDto getCategoryById(Long categoryId) {
+    public CategoryDto getCategoryById(@NotNull Long categoryId) {
         Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new NotFoundException("Категория не существует"));
         return CategoryMapper.toCategoryDto(category);
     }
