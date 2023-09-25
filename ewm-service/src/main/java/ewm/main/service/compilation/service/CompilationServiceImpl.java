@@ -28,7 +28,7 @@ public class CompilationServiceImpl implements CompilationService {
 
     @Override
     @Transactional
-    public CompilationDto createCompilation( NewCompilationDto newCompilationDto) {
+    public CompilationDto createCompilation(NewCompilationDto newCompilationDto) {
         List<Event> events = eventRepository.findAllByIdIn(newCompilationDto.getEvents());
         Compilation compilation = CompilationMapper.toCompilation(newCompilationDto, events);
         return CompilationMapper.toCompilationDto(compilationRepository.save(compilation));
@@ -36,7 +36,7 @@ public class CompilationServiceImpl implements CompilationService {
 
     @Override
     @Transactional
-    public CompilationDto updateCompilation(@NotNull Long compilationId,@NotNull NewCompilationDto newCompilationDto) {
+    public CompilationDto updateCompilation(@NotNull Long compilationId, @NotNull NewCompilationDto newCompilationDto) {
         Compilation updateCompilation = compilationRepository.findById(compilationId)
                 .orElseThrow(() -> new NotFoundException("Compilation not exist"));
         List<Event> events = eventRepository.findAllByIdIn(newCompilationDto.getEvents());
