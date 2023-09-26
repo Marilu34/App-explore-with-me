@@ -1,7 +1,7 @@
 version: '3.1'
 services:
   stats:
-    build: stats/server
+    build: stat-service/server
     image: explore-with-me-server
     container_name: explore-with-me-server
     ports:
@@ -15,14 +15,14 @@ services:
     ports:
       - "6540:5431"
     environment:
-      - POSTGRES_DB=jdbc:h2:mem:explore-with-me-stats
+      - POSTGRES_DB=jdbc:h2:mem:statservice
       - POSTGRES_USER=stats
       - POSTGRES_PASSWORD=stats
 
-  core:
+  ewm-service:
     build: core
-    image: explore-with-me-core
-    container_name: explore-with-me-core
+    image: explore-with-me-ewm-service
+    container_name: explore-with-me-ewm-service
     ports:
       - "8080:8080"
     depends_on:
@@ -34,6 +34,6 @@ services:
     ports:
       - "6541:5432"
     environment:
-      - POSTGRES_DB=jdbc:h2:mem:explore-with-me-core
+      - POSTGRES_DB=jdbc:h2:mem:ewmmainservice
       - POSTGRES_USER=core
       - POSTGRES_PASSWORD=core
