@@ -24,10 +24,7 @@
 
 	<modules>
 		<module>ewm-service</module>
-		<module>stat-service/client</module>
-		<module>stat-service/dto</module>
 		<module>stat-service</module>
-		<module>stat-service/stat-server</module>
 	</modules>
 
 	<build>
