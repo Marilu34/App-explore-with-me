@@ -1,48 +1,39 @@
-version: '3.8'
+version: '3.1'
 services:
-  stats-server:
-    build: ./stat-service/stat-server
-    container_name: ewm-stat-server
+  stats:
+    build: stats/server
+    image: explore-with-me-server
+    container_name: explore-with-me-server
     ports:
       - "9090:9090"
     depends_on:
       - stats-db
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/ewmstatsdb
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=postgrespw
-      - SPRING_PROFILES_ACTIVE=dev
 
   stats-db:
     image: postgres:14-alpine
-    container_name: ewm-stats-db
+    container_name: stats-db
     ports:
-      - "6541:5432"
+      - "6540:5431"
     environment:
-      - POSTGRES_DB=ewmstatsdb
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgrespw
+      - POSTGRES_DB=jdbc:h2:mem:explore-with-me-stats
+      - POSTGRES_USER=stats
+      - POSTGRES_PASSWORD=stats
 
-  ewm-service:
-    build: ./ewm-service
-    container_name: ewm-main-server
+  core:
+    build: core
+    image: explore-with-me-core
+    container_name: explore-with-me-core
     ports:
       - "8080:8080"
     depends_on:
-      - ewm-db
-    environment:
-      - STAT_SERVER_URL=http://ewm-stat-server:9090
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/ewmmaindb
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=postgrespw
-      - SPRING_PROFILES_ACTIVE=dev
+      - core-db
 
-  ewm-db:
+  core-db:
     image: postgres:14-alpine
-    container_name: ewm-main-db
+    container_name: core-db
     ports:
-      - "6542:5432"
+      - "6541:5432"
     environment:
-      - POSTGRES_DB=ewmmaindb
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgrespw
+      - POSTGRES_DB=jdbc:h2:mem:explore-with-me-core
+      - POSTGRES_USER=core
+      - POSTGRES_PASSWORD=core
