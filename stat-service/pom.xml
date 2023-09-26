@@ -6,7 +6,7 @@
     <modules>
         <module>dto</module>
         <module>client</module>
-        <module>stat-server</module>
+        <module>server</module>
     </modules>
 
     <parent>
