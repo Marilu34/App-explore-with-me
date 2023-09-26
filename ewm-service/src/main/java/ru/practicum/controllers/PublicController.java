@@ -33,7 +33,7 @@ public class PublicController {
     @PostMapping("/users/{userId}/events")
     @ResponseStatus(HttpStatus.CREATED)
     public EventDto postEvent(@PathVariable int userId, @RequestBody EventDtoRequest eventDto) {
-        log.info("Create new event for user: {}", userId);
+        log.info("Cоздано новое событие от Пользователя: {}", userId);
         return userService.createEventForUser(userId, eventDto);
     }
 
@@ -41,45 +41,45 @@ public class PublicController {
     public List<EventDto> getEvents(@PathVariable int userId,
                                     @RequestParam(value = "from", defaultValue = "0") Integer from,
                                     @RequestParam(value = "size", defaultValue = "10") Integer size) {
-        log.info("Get user {} events", userId);
+        log.info("Получены от Пользователя {} события", userId);
         return userService.getEventsForUser(userId, from, size);
     }
 
     @GetMapping("/users/{userId}/events/{eventId}")
     public EventDto getEventForUser(@PathVariable int userId, @PathVariable int eventId) {
-        log.info("Get event {} for user {}", eventId, userId);
+        log.info("Получено событие {} для Пользователя {}", eventId, userId);
         return userService.getEventForUser(userId, eventId);
     }
 
     @PatchMapping("/users/{userId}/events/{eventId}")
     public EventDto patchEventForOwner(@PathVariable int userId, @PathVariable int eventId,
                                        @RequestBody EventDtoRequest eventDtoRequest) {
-        log.info("Update event {} for user {}", eventId, userId);
+        log.info("Обновлено событие {} для Пользователя {}", eventId, userId);
         return userService.updateEventForOwner(userId, eventId, eventDtoRequest);
     }
 
     @GetMapping("/users/{userId}/requests")
     public List<UserRequestDto> getAllRequestForUser(@PathVariable int userId) {
-        log.info("Get all requests for user {}", userId);
+        log.info("Получены все запросы для Пользователя {}", userId);
         return userService.getRequestsForUser(userId);
     }
 
     @PostMapping("/users/{userId}/requests")
     @ResponseStatus(HttpStatus.CREATED)
     public UserRequestDto postRequestForUser(@PathVariable int userId, @RequestParam int eventId) {
-        log.info("Post user request for event {}", eventId);
+        log.info("Опубиковано Пользователем запрос для События {}", eventId);
         return userService.createRequestForEvent(userId, eventId);
     }
 
     @PatchMapping("/users/{userId}/requests/{requestId}/cancel")
     public UserRequestDto patchCancelRequest(@PathVariable int userId, @PathVariable int requestId) {
-        log.info("Cancel request id: {}", requestId);
+        log.info("Окончен запрос с id = {}", requestId);
         return userService.cancelUserRequestForEvent(userId, requestId);
     }
 
     @GetMapping("/users/{userId}/events/{eventId}/requests")
     public List<UserRequestDto> getAllRequestForOwnerEvent(@PathVariable int userId, @PathVariable int eventId) {
-        log.info("Get all request for owner {} event {}", userId, eventId);
+        log.info("Получены все запросы от Пользователя {} на События {}", userId, eventId);
         return userService.getAllRequestsForOwnerEvent(userId, eventId);
     }
 
@@ -93,13 +93,13 @@ public class PublicController {
     @GetMapping("/categories")
     public List<CategoryDto> getAllCategories(@RequestParam(value = "from", defaultValue = "0") Integer from,
                                               @RequestParam(value = "size", defaultValue = "10") Integer size) {
-        log.info("Get all categories");
+        log.info("Получить все категории");
         return categoryService.getAllCategory(from, size);
     }
 
     @GetMapping("/categories/{id}")
     public CategoryDto getCategory(@PathVariable Integer id) {
-        log.info("Get category: {}", id);
+        log.info("Получить категорию: {}", id);
         return categoryService.getCategory(id);
     }
 
@@ -116,14 +116,14 @@ public class PublicController {
                                     @RequestParam(value = "from", defaultValue = "0") Integer from,
                                     @RequestParam(value = "size", defaultValue = "10") Integer size,
                                     HttpServletRequest request) {
-        log.info("Get events for ip: {}", request.getRemoteAddr());
+        log.info("Получить все События по ip: {}", request.getRemoteAddr());
         return eventService.getEvents(text, categories, paid, rangeStart,
                 rangeEnd, onlyAvailable, sort, from, size, request);
     }
 
     @GetMapping("/events/{id}")
     public EventDto getEvent(@PathVariable Integer id, HttpServletRequest request) {
-        log.info("Get event: {}", id);
+        log.info("Получить событие: {}", id);
         return eventService.getEvent(id, request);
     }
 
@@ -131,13 +131,13 @@ public class PublicController {
     public List<CompilationDto> getAllCompilations(@RequestParam(value = "pinned", defaultValue = "false") Boolean pinned,
                                                    @RequestParam(value = "from", defaultValue = "0") Integer from,
                                                    @RequestParam(value = "size", defaultValue = "10") Integer size) {
-        log.info("Get all compilations");
+        log.info("Получить все компиляции: ");
         return compilationService.getAllCompilation(pinned, from, size);
     }
 
     @GetMapping("/compilations/{compId}")
     public CompilationDto getCompilation(@PathVariable Integer compId) {
-        log.info("Get compilation: {}", compId);
+        log.info("Получить компиляцию: {}", compId);
         return compilationService.getCompilation(compId);
     }
 }

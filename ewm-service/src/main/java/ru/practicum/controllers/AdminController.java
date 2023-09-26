@@ -40,34 +40,34 @@ public class AdminController {
     @PostMapping("/users")
     @ResponseStatus(HttpStatus.CREATED)
     public UserDto postUser(@RequestBody UserDto userDto) {
-        log.info("Post user: {}", userDto);
+        log.info("Создан Пользователь: {}", userDto);
         return userService.createUser(userDto);
     }
 
     @DeleteMapping("/users/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public UserDto deleteUser(@PathVariable Integer userId) {
-        log.info("Delete user: {}", userId);
+        log.info("Пользователь удален: {}", userId);
         return userService.deleteUser(userId);
     }
 
     @PostMapping("/categories")
     @ResponseStatus(HttpStatus.CREATED)
     public CategoryDto postCategory(@RequestBody CategoryDto categoryDto) {
-        log.info("Post category: {}", categoryDto);
+        log.info("Создана категория: {}", categoryDto);
         return categoryService.createCategory(categoryDto);
     }
 
     @PatchMapping("/categories/{id}")
     public CategoryDto patchCategory(@PathVariable Integer id, @RequestBody CategoryDto categoryDto) {
-        log.info("Patch category: {}", categoryDto);
+        log.info("Категория Обновлена: {}", categoryDto);
         return categoryService.updateCategory(id, categoryDto);
     }
 
     @DeleteMapping("/categories/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public CategoryDto deleteCategory(@PathVariable Integer id) {
-        log.info("Delete category: {}", id);
+        log.info("Категория удалена: {}", id);
         return categoryService.deleteCategory(id);
     }
 
