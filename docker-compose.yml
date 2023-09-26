@@ -20,20 +20,20 @@ services:
       - POSTGRES_PASSWORD=stats
 
   ewm-service:
-    build: core
+    build: ewm-service
     image: explore-with-me-ewm-service
     container_name: explore-with-me-ewm-service
     ports:
       - "8080:8080"
     depends_on:
-      - core-db
+      - ewm-service-db
 
-  core-db:
+  ewm-service-db:
     image: postgres:14-alpine
-    container_name: core-db
+    container_name: ewm-service-db
     ports:
       - "6541:5432"
     environment:
       - POSTGRES_DB=jdbc:h2:mem:ewmmainservice
-      - POSTGRES_USER=core
-      - POSTGRES_PASSWORD=core
+      - POSTGRES_USER=ewmservice
+      - POSTGRES_PASSWORD=ewmservice
