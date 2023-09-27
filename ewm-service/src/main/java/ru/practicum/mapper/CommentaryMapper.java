@@ -1,11 +1,13 @@
 package ru.practicum.mapper;
 
+import lombok.experimental.UtilityClass;
 import ru.practicum.dto.CommentaryDto;
 import ru.practicum.model.Commentary;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@UtilityClass
 public class CommentaryMapper {
 
     public static CommentaryDto toCommentaryDto(Commentary comment) {

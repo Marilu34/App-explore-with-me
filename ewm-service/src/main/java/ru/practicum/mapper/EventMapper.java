@@ -1,10 +1,9 @@
 package ru.practicum.mapper;
 
-import lombok.experimental.UtilityClass;
-import ru.practicum.model.Category;
-import ru.practicum.model.Event;
 import ru.practicum.dto.EventDto;
 import ru.practicum.dto.EventDtoRequest;
+import ru.practicum.model.Category;
+import ru.practicum.model.Event;
 import ru.practicum.model.Location;
 import ru.practicum.model.User;
 
@@ -12,7 +11,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@UtilityClass
 public class EventMapper {
 
     public static Event toEvent(EventDtoRequest eventDto, User user) {
@@ -49,7 +47,8 @@ public class EventMapper {
                 event.isRequestModeration(),
                 event.getState(),
                 event.getTitle(),
-                event.getViews());
+                event.getViews(),
+                event.getComments());
     }
 
     public static List<EventDto> toEventDtoList(List<Event> events) {
