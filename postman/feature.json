@@ -1,17 +1,16 @@
 {
 	"info": {
-		"_postman_id": "4c8dda3b-626d-453c-a8b5-8e4515ae12ad",
-		"name": "Diplom",
+		"_postman_id": "26791208-f7c1-4b44-a86b-a621cf67609f",
+		"name": "feature_comments",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "26310000",
-		"_collection_link": "https://universal-crater-21935.postman.co/workspace/Team-Workspace~2be55f36-a6a7-4f53-85cb-13010c967c19/collection/26310000-4c8dda3b-626d-453c-a8b5-8e4515ae12ad?action=share&source=collection_link&creator=26310000"
+		"_exporter_id": "26970642"
 	},
 	"item": [
 		{
 			"name": "comments",
 			"item": [
 				{
-					"name": "Create comment 1",
+					"name": "CreateComment1",
 					"event": [
 						{
 							"listen": "test",
@@ -82,10 +81,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"title\": \"Замечательное мероприятие\",\r\n    \"text\": \"Ищу компанию, желательно девчонки))) 20-27 лет\"\r\n}"
+							"raw": "{\r\n    \"title\": \"Событие\",\r\n    \"text\": \"Хочу посетить не один - ищу компанию\"\r\n}"
 						},
 						"url": {
-							"raw": "{{localhost}}/users/3/events/105/comments",
+							"raw": "{{localhost}}/users/3/events/113/comments",
 							"host": [
 								"{{localhost}}"
 							],
@@ -93,7 +92,7 @@
 								"users",
 								"3",
 								"events",
-								"105",
+											"113",
 								"comments"
 							]
 						}
@@ -101,7 +100,7 @@
 					"response": []
 				},
 				{
-					"name": "Create fail comment",
+					"name": "CreateWrongComment",
 					"event": [
 						{
 							"listen": "test",
@@ -132,10 +131,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"title\": \"Замечательное мероприятие\",\r\n    \"text\": \"Ищу компанию, желательно девчонки))) 20-27 лет\"\r\n}"
+							"raw": "{\r\n    \"title\": \"Событие\",\r\n    \"text\": \"Хочу посетить не один - ищу компанию\"\r\n}"
 						},
 						"url": {
-							"raw": "{{localhost}}/users/3/events/105/comments",
+							"raw": "{{localhost}}/users/3/events/113/comments",
 							"host": [
 								"{{localhost}}"
 							],
@@ -143,7 +142,7 @@
 								"users",
 								"3",
 								"events",
-								"105",
+								"113",
 								"comments"
 							]
 						}
@@ -151,7 +150,7 @@
 					"response": []
 				},
 				{
-					"name": "Get 1 event",
+					"name": "GetEvent",
 					"event": [
 						{
 							"listen": "test",
@@ -186,7 +185,7 @@
 									"\r",
 									"// Проверка значений некоторых полей\r",
 									"pm.test(\"Check specific field values\", function () {\r",
-									"    pm.expect(jsonResponse.id).to.eql(105);\r",
+									"    pm.expect(jsonResponse.id).to.eql(113);\r",
 									"});\r",
 									"\r",
 									"pm.test(\"Check comments array content\", function () {\r",
@@ -203,8 +202,8 @@
 									"    // Проверка значений полей первого комментария\r",
 									"    pm.expect(firstComment.id).to.eql(1);\r",
 									"    pm.expect(firstComment.author.id).to.eql(3);\r",
-									"    pm.expect(firstComment.title).to.eql(\"Замечательное мероприятие\");\r",
-									"    pm.expect(firstComment.text).to.eql(\"Ищу компанию, желательно девчонки))) 20-27 лет\");\r",
+									"    pm.expect(firstComment.title).to.eql(\"Событие\");\r",
+									"    pm.expect(firstComment.text).to.eql(\"Хочу посетить не один - ищу компанию\");\r",
 									"});"
 								],
 								"type": "text/javascript"
@@ -233,20 +232,20 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{localhost}}/events/105",
+							"raw": "{{localhost}}/events/113",
 							"host": [
 								"{{localhost}}"
 							],
 							"path": [
 								"events",
-								"105"
+								"113"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Create comment 2",
+					"name": "CreateComment2",
 					"event": [
 						{
 							"listen": "test",
@@ -317,10 +316,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"title\": \"Отлично! Люблю саппы!!!!\",\r\n    \"text\": \"Погнали все, новичкам не трудно научиться будет, а профессионалам показать свои умения\"\r\n}"
+							"raw": "{\r\n    \"title\": \"Лайк! Хочу исчо\",\r\n    \"text\": \"Приходите,и Вам понравится\"\r\n}"
 						},
 						"url": {
-							"raw": "{{localhost}}/users/5/events/105/comments",
+							"raw": "{{localhost}}/users/5/events/113/comments",
 							"host": [
 								"{{localhost}}"
 							],
@@ -328,7 +327,7 @@
 								"users",
 								"5",
 								"events",
-								"105",
+								"113",
 								"comments"
 							]
 						}
@@ -336,7 +335,7 @@
 					"response": []
 				},
 				{
-					"name": "Patch comment 1",
+					"name": "UpdateComment1",
 					"event": [
 						{
 							"listen": "test",
@@ -407,7 +406,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"title\": \"Замечательное мероприятие!!\",\r\n    \"text\": \"Всем спорт, мир, труд, май, дружба, жвачка!\"\r\n}"
+							"raw": "{\r\n    \"title\": \"Событие понравилось очень\",\r\n    \"text\": \"Приду исчо\"\r\n}"
 						},
 						"url": {
 							"raw": "{{localhost}}/users/3/comments/1",
@@ -425,7 +424,7 @@
 					"response": []
 				},
 				{
-					"name": "Create comment 3",
+					"name": "CreateComment3",
 					"event": [
 						{
 							"listen": "test",
@@ -496,10 +495,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"title\": \"Мероприятие лучшее!\",\r\n    \"text\": \"Мероприятие доставит много положительных эмоций, его инициатор, очень крутой!!!\"\r\n}"
+							"raw": "{\r\n    \"title\": \"Событие понравилось\",\r\n    \"text\": \"Событие понравилось.Лайк\"\r\n}"
 						},
 						"url": {
-							"raw": "{{localhost}}/users/1/events/105/comments",
+							"raw": "{{localhost}}/users/1/events/113/comments",
 							"host": [
 								"{{localhost}}"
 							],
@@ -507,7 +506,7 @@
 								"users",
 								"1",
 								"events",
-								"105",
+								"113",
 								"comments"
 							]
 						}
@@ -515,7 +514,7 @@
 					"response": []
 				},
 				{
-					"name": "Delete comment 3",
+					"name": "DeleteComment3",
 					"event": [
 						{
 							"listen": "test",
@@ -560,7 +559,7 @@
 					"response": []
 				},
 				{
-					"name": "Get 1 event on 2 comments",
+					"name": "GetEventOnComment2",
 					"event": [
 						{
 							"listen": "test",
@@ -595,7 +594,7 @@
 									"\r",
 									"// Проверка значений некоторых полей\r",
 									"pm.test(\"Check specific field values\", function () {\r",
-									"    pm.expect(jsonResponse.id).to.eql(105);\r",
+									"    pm.expect(jsonResponse.id).to.eql(113);\r",
 									"    pm.expect(jsonResponse.comments.length).to.eql(2);\r",
 									"});"
 								],
@@ -625,13 +624,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{localhost}}/events/105",
+							"raw": "{{localhost}}/events/113",
 							"host": [
 								"{{localhost}}"
 							],
 							"path": [
 								"events",
-								"105"
+								"113"
 							]
 						}
 					},
