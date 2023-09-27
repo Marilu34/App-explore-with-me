@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.model.Category;
 import ru.practicum.repository.CategoryRepository;
 import ru.practicum.client.StatsClient;
@@ -181,6 +182,7 @@ public class EventServiceDB implements EventService {
     }
 
     @Override
+    @Transactional
     public EventDto patchAdminEvent(Integer eventId, EventDtoRequest eventDtoRequest) {
         Event oldEvent = repository.findById(eventId).orElseThrow(() -> new ValidationException("Такого события нет!"));
         if (eventDtoRequest.getCategory() != null) {

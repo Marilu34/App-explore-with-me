@@ -3,6 +3,7 @@ package ru.practicum.db;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.mapper.CompilationMapper;
 import ru.practicum.model.Compilation;
 import ru.practicum.dto.CompilationDto;
@@ -26,6 +27,7 @@ public class CompilationServiceDB implements CompilationService {
     private final EventRepository eventRepository;
 
     @Override
+    @Transactional
     public CompilationDto createCompilation(CompilationDtoRequest compilationDto) {
         List<Event> events = new ArrayList<>();
         if (compilationDto.getPinned() == null) {
@@ -50,11 +52,13 @@ public class CompilationServiceDB implements CompilationService {
     }
 
     @Override
+    @Transactional
     public void deleteCompilation(Integer compId) {
         repository.deleteById(compId);
     }
 
     @Override
+    @Transactional
     public CompilationDto updateCompilation(Integer compId, CompilationDtoRequest compilationDto) {
         Compilation oldCompilation = repository.findById(compId)
                 .orElseThrow(() -> new ValidationException("Такой подборки нет!"));

@@ -1,11 +1,13 @@
 package ru.practicum.mapper;
 
+import lombok.experimental.UtilityClass;
 import ru.practicum.model.User;
 import ru.practicum.dto.UserDto;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@UtilityClass
 public class UserMapper {
     public static UserDto toUserDto(User user) {
         return new UserDto(

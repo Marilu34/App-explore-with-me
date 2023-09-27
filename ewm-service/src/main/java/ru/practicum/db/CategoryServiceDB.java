@@ -3,6 +3,7 @@ package ru.practicum.db;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.mapper.CategoryMapper;
 import ru.practicum.model.Category;
 import ru.practicum.dto.CategoryDto;
@@ -23,6 +24,7 @@ public class CategoryServiceDB implements CategoryService {
     private final EventRepository eventRepository;
 
     @Override
+    @Transactional
     public CategoryDto createCategory(CategoryDto categoryDto) {
         if (categoryDto.getName() == null || categoryDto.getName().trim().isEmpty()) {
             throw new ValidationException("Имя не может быть пустым!");
@@ -34,6 +36,7 @@ public class CategoryServiceDB implements CategoryService {
     }
 
     @Override
+    @Transactional
     public CategoryDto deleteCategory(Integer id) {
         if (repository.findById(id).isEmpty()) {
             throw new ResourceNotFoundException("Такой категории нет!");
@@ -47,6 +50,7 @@ public class CategoryServiceDB implements CategoryService {
     }
 
     @Override
+    @Transactional
     public CategoryDto updateCategory(Integer id, CategoryDto categoryDto) {
         if (repository.findById(id).isEmpty()) {
             throw new ResourceNotFoundException("Такой категории нет!");

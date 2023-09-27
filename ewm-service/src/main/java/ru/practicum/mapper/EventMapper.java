@@ -1,5 +1,6 @@
 package ru.practicum.mapper;
 
+import lombok.experimental.UtilityClass;
 import ru.practicum.model.Category;
 import ru.practicum.model.Event;
 import ru.practicum.dto.EventDto;
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@UtilityClass
 public class EventMapper {
 
     public static Event toEvent(EventDtoRequest eventDto, User user) {

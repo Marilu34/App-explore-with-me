@@ -1,11 +1,13 @@
 package ru.practicum.mapper;
 
+import lombok.experimental.UtilityClass;
 import ru.practicum.model.Category;
 import ru.practicum.dto.CategoryDto;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@UtilityClass
 public class CategoryMapper {
 
     public static CategoryDto toCategoryDto(Category category) {

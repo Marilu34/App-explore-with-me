@@ -1,11 +1,13 @@
 package ru.practicum.mapper;
 
+import lombok.experimental.UtilityClass;
 import ru.practicum.model.Compilation;
 import ru.practicum.dto.CompilationDto;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@UtilityClass
 public class CompilationMapper {
 
     public static CompilationDto toCompilationDto(Compilation compilation) {

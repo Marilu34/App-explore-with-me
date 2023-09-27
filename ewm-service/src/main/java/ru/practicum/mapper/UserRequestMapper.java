@@ -1,11 +1,13 @@
 package ru.practicum.mapper;
 
+import lombok.experimental.UtilityClass;
 import ru.practicum.model.UserRequest;
 import ru.practicum.dto.UserRequestDto;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@UtilityClass
 public class UserRequestMapper {
 
     public static UserRequestDto toRequestDto(UserRequest userRequest) {

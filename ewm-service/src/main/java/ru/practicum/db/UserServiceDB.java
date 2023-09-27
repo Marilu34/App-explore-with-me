@@ -3,6 +3,7 @@ package ru.practicum.db;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.repository.CategoryRepository;
 import ru.practicum.dto.UserRequestDto;
 import ru.practicum.mapper.EventMapper;
@@ -58,6 +59,7 @@ public class UserServiceDB implements UserService {
     }
 
     @Override
+    @Transactional
     public UserDto createUser(UserDto user) {
         if (user.getName() == null || user.getName().trim().isEmpty()) {
             throw new ValidationException("Нужно заполнить имя!");
@@ -75,6 +77,7 @@ public class UserServiceDB implements UserService {
     }
 
     @Override
+    @Transactional
     public UserDto updateUser(Integer id, UserDto user) {
         user.setId(id);
         User existsUser = repository.findById(id).orElseThrow(() ->
@@ -89,6 +92,7 @@ public class UserServiceDB implements UserService {
     }
 
     @Override
+    @Transactional
     public UserDto deleteUser(Integer id) {
         UserDto user = UserMapper.toUserDto(repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Такого пользователя нет!")));
@@ -97,6 +101,7 @@ public class UserServiceDB implements UserService {
     }
 
     @Override
+    @Transactional
     public EventDto createEventForUser(Integer userId, EventDtoRequest event) {
         if (repository.findById(userId).isEmpty()) {
             throw new ResourceNotFoundException("Такого пользователя не существует");
@@ -159,6 +164,7 @@ public class UserServiceDB implements UserService {
     }
 
     @Override
+    @Transactional
     public EventDto updateEventForOwner(Integer userId, Integer eventId, EventDtoRequest event) {
         if (repository.findById(userId).isEmpty()) {
             throw new ResourceNotFoundException("Такого пользователя не существует");
@@ -250,6 +256,7 @@ public class UserServiceDB implements UserService {
     }
 
     @Override
+    @Transactional
     public AllUserRequestResponse changeStatusRequestForEvent(Integer userId, Integer eventId,
                                                               AllUserRequestFormat request) {
         Event event = eventRepository.findById(eventId)
@@ -281,6 +288,7 @@ public class UserServiceDB implements UserService {
     }
 
     @Override
+    @Transactional
     public UserRequestDto createRequestForEvent(Integer userId, Integer eventId) {
         UserRequest userRequest = new UserRequest();
         for (UserRequest request : requestRepository.findAll()) {
@@ -340,6 +348,7 @@ public class UserServiceDB implements UserService {
     }
 
     @Override
+    @Transactional
     public UserRequestDto cancelUserRequestForEvent(Integer userId, Integer requestId) {
         if (!requestRepository.findById(requestId).orElseThrow(() -> new ResourceNotFoundException("Такого запроса нет!"))
                 .getRequester().getId().equals(userId)) {

@@ -63,7 +63,6 @@ public class Event {
     @Column(name = "title")
     private String title;
 
-    @Column(name = "views")
     private Integer views;
 
     @OneToOne
