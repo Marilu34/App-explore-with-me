@@ -25,7 +25,7 @@ public class ErrorHandler {
     public ErrorResponse ConflictException(final RuntimeException exception) {
         log.error("ERROR 409: {}", exception.getMessage());
         return new ErrorResponse(HttpStatus.CONFLICT.getReasonPhrase(),
-                "For the requested operation the conditions are not met.",
+                "Для запрошенной операции условия не выполнены.",
                 exception.getMessage(), LocalDateTime.now());
     }
 
@@ -33,7 +33,7 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse NotFoundException(final NotFoundException exception) {
         log.error("ERROR 404: {}", exception.getMessage());
-        return new ErrorResponse(HttpStatus.NOT_FOUND.getReasonPhrase(), "The required object was not found.",
+        return new ErrorResponse(HttpStatus.NOT_FOUND.getReasonPhrase(), "Требуемый объект не был найден.",
                 exception.getMessage(), LocalDateTime.now());
     }
 
@@ -41,7 +41,7 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse ValidationException(final RuntimeException exception) {
         log.error("ERROR 400: {}", exception.getMessage());
-        return new ErrorResponse(HttpStatus.BAD_REQUEST.getReasonPhrase(), "Incorrectly made request.",
+        return new ErrorResponse(HttpStatus.BAD_REQUEST.getReasonPhrase(), "Неправильно сделанный запрос.",
                 exception.getMessage(), LocalDateTime.now());
     }
 }

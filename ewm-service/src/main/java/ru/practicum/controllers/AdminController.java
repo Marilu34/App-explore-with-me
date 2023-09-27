@@ -58,6 +58,7 @@ public class AdminController {
         log.info("Get users");
         return userService.getUsers(ids, from, size);
     }
+
     @PostMapping("/categories")
     @ResponseStatus(HttpStatus.CREATED)
     public CategoryDto postCategory(@RequestBody CategoryDto categoryDto) {
@@ -102,7 +103,7 @@ public class AdminController {
 
     @PatchMapping("/compilations/{compId}")
     public CompilationDto updateCompilation(@PathVariable Integer compId,
-                                           @RequestBody CompilationDtoRequest compilationDtoRequest) {
+                                            @RequestBody CompilationDtoRequest compilationDtoRequest) {
         return compilationService.updateCompilation(compId, compilationDtoRequest);
     }
 

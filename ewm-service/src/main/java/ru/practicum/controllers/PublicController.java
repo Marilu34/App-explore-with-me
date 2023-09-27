@@ -35,24 +35,26 @@ public class PublicController {
 
     @GetMapping("/users/{userId}/events")
     public List<EventDto> getEventsForUser(@PathVariable int userId,
-                                        @RequestParam(value = "from", defaultValue = "0") Integer from,
-                                        @RequestParam(value = "size", defaultValue = "10") Integer size) {
+                                           @RequestParam(value = "from", defaultValue = "0") Integer from,
+                                           @RequestParam(value = "size", defaultValue = "10") Integer size) {
         log.info("Получены от Пользователя {} события", userId);
         return userService.getEventsForUser(userId, from, size);
     }
+
     @GetMapping("/users/{userId}/events/{eventId}")
     public EventDto getEventForUser(@PathVariable int userId, @PathVariable int eventId) {
         log.info("Получено событие {} для Пользователя {}", eventId, userId);
         return userService.getEventForUser(userId, eventId);
     }
+
     @GetMapping("/events")
     public List<EventDto> getEventsByIP(@RequestParam(value = "text", defaultValue = "") String text,
                                         @RequestParam(value = "categories", defaultValue = "") List<Long> categories,
                                         @RequestParam(value = "paid", required = false) Boolean paid,
                                         @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-                                    @RequestParam(value = "rangeStart", required = false) LocalDateTime rangeStart,
+                                        @RequestParam(value = "rangeStart", required = false) LocalDateTime rangeStart,
                                         @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-                                    @RequestParam(value = "rangeEnd", required = false) LocalDateTime rangeEnd,
+                                        @RequestParam(value = "rangeEnd", required = false) LocalDateTime rangeEnd,
                                         @RequestParam(value = "onlyAvailable", defaultValue = "false") Boolean onlyAvailable,
                                         @RequestParam(value = "sort", defaultValue = "EVENT_DATE") String sort,
                                         @RequestParam(value = "from", defaultValue = "0") Integer from,
@@ -72,7 +74,7 @@ public class PublicController {
 
     @PatchMapping("/users/{userId}/events/{eventId}")
     public EventDto updateEventForOwner(@PathVariable int userId, @PathVariable int eventId,
-                                       @RequestBody EventDtoRequest eventDtoRequest) {
+                                        @RequestBody EventDtoRequest eventDtoRequest) {
         log.info("Обновлено событие {} для Пользователя {}", eventId, userId);
         return userService.updateEventForOwner(userId, eventId, eventDtoRequest);
     }
@@ -122,6 +124,7 @@ public class PublicController {
         log.info("Получить компиляцию: {}", compId);
         return compilationService.getCompilation(compId);
     }
+
     @GetMapping("/categories")
     public List<CategoryDto> getAllCategories(@RequestParam(value = "from", defaultValue = "0") Integer from,
                                               @RequestParam(value = "size", defaultValue = "10") Integer size) {
@@ -136,7 +139,6 @@ public class PublicController {
     }
 
 
-
     @PostMapping("/users/{userId}/events/{eventId}/comments")
     @ResponseStatus(HttpStatus.CREATED)
     public CommentaryDto postComment(@PathVariable int userId, @PathVariable int eventId,
@@ -147,7 +149,7 @@ public class PublicController {
 
     @PatchMapping("/users/{userId}/comments/{commentId}")
     public CommentaryDto updateComment(@PathVariable int userId, @PathVariable int commentId,
-                                      @RequestBody CommentaryDto commentaryDto) {
+                                       @RequestBody CommentaryDto commentaryDto) {
         log.info("Изменить комментарий {} для Пользователя {}", commentaryDto, userId);
         return userService.updateComment(userId, commentId, commentaryDto);
     }
