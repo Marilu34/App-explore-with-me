@@ -22,7 +22,7 @@ public class ErrorHandler {
     @ExceptionHandler({ConflictException.class, DataIntegrityViolationException.class,
             HttpMessageNotReadableException.class})
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse ConflictException(final RuntimeException exception) {
+    public ErrorResponse conflictException(final RuntimeException exception) {
         log.error("ERROR 409: {}", exception.getMessage());
         return new ErrorResponse(HttpStatus.CONFLICT.getReasonPhrase(),
                 "Для запрошенной операции условия не выполнены.",
@@ -31,7 +31,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse NotFoundException(final NotFoundException exception) {
+    public ErrorResponse notFoundException(final NotFoundException exception) {
         log.error("ERROR 404: {}", exception.getMessage());
         return new ErrorResponse(HttpStatus.NOT_FOUND.getReasonPhrase(), "Требуемый объект не был найден.",
                 exception.getMessage(), LocalDateTime.now());
@@ -39,7 +39,7 @@ public class ErrorHandler {
 
     @ExceptionHandler({ConstraintViolationException.class, ValidationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse ValidationException(final RuntimeException exception) {
+    public ErrorResponse validationException(final RuntimeException exception) {
         log.error("ERROR 400: {}", exception.getMessage());
         return new ErrorResponse(HttpStatus.BAD_REQUEST.getReasonPhrase(), "Неправильно сделанный запрос.",
                 exception.getMessage(), LocalDateTime.now());
