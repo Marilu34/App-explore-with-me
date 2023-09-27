@@ -11,7 +11,7 @@ import ru.practicum.dto.CompilationDtoRequest;
 import ru.practicum.repository.CompilationRepository;
 import ru.practicum.model.Event;
 import ru.practicum.repository.EventRepository;
-import ru.practicum.exception.ResourceNotFoundException;
+import ru.practicum.exception.NotFoundException;
 import ru.practicum.exception.ValidationException;
 import ru.practicum.services.CompilationService;
 
@@ -91,6 +91,6 @@ public class CompilationServiceDB implements CompilationService {
     @Override
     public CompilationDto getCompilation(Integer id) {
         return CompilationMapper.toCompilationDto(repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Такой подборки нет!")));
+                .orElseThrow(() -> new NotFoundException("Такой подборки нет!")));
     }
 }

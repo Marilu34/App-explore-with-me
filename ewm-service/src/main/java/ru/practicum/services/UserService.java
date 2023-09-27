@@ -1,18 +1,17 @@
 package ru.practicum.services;
 
-import ru.practicum.dto.EventDto;
-import ru.practicum.dto.EventDtoRequest;
-import ru.practicum.model.AllUserRequestFormat;
-import ru.practicum.model.AllUserRequestResponse;
-import ru.practicum.dto.UserRequestDto;
-import ru.practicum.dto.UserDto;
+import ru.practicum.dto.*;
+import ru.practicum.model.UsersRequest;
+import ru.practicum.model.UserRequestResponse;
 
 import java.util.List;
 
 public interface UserService {
-    List<UserDto> getUsers(List<Integer> ids, Integer from, Integer size);
+
 
     UserDto createUser(UserDto user);
+
+    List<UserDto> getUsers(List<Integer> ids, Integer from, Integer size);
 
     UserDto updateUser(Integer id, UserDto user);
 
@@ -34,5 +33,11 @@ public interface UserService {
 
     List<UserRequestDto> getAllRequestsForOwnerEvent(Integer userId, Integer eventId);
 
-    AllUserRequestResponse changeStatusRequestForEvent(Integer userId, Integer eventId, AllUserRequestFormat request);
+    UserRequestResponse changeStatusRequestForEvent(Integer userId, Integer eventId, UsersRequest request);
+
+    CommentaryDto createComment(Integer userId, Integer eventId, CommentaryDto commentaryDto);
+
+    CommentaryDto updateComment(Integer userId, Integer commentId, CommentaryDto commentaryDto);
+
+    void deleteComment(Integer userId, Integer commentId);
 }

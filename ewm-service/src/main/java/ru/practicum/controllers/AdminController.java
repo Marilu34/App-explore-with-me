@@ -28,20 +28,18 @@ public class AdminController {
     private final EventService eventService;
     private final CompilationService compilationService;
 
-    @GetMapping("/users")
-    public List<UserDto> getUsers(@RequestParam(value = "ids", defaultValue = "0") List<Integer> ids,
-                                  @RequestParam(value = "from", defaultValue = "0") Integer from,
-                                  @RequestParam(value = "size", defaultValue = "10")
-                                  Integer size) {
-        log.info("Get users");
-        return userService.getUsers(ids, from, size);
-    }
 
     @PostMapping("/users")
     @ResponseStatus(HttpStatus.CREATED)
     public UserDto postUser(@RequestBody UserDto userDto) {
         log.info("Создан Пользователь: {}", userDto);
         return userService.createUser(userDto);
+    }
+
+    @PatchMapping("/users/{id}")
+    public UserDto updateUser(@PathVariable Integer id, @RequestBody UserDto user) {
+        log.info("Информация о Пользователе Обновлена: {}", user);
+        return userService.updateUser(id, user);
     }
 
     @DeleteMapping("/users/{userId}")
@@ -51,6 +49,15 @@ public class AdminController {
         return userService.deleteUser(userId);
     }
 
+
+    @GetMapping("/users")
+    public List<UserDto> getUsers(@RequestParam(value = "ids", defaultValue = "0") List<Integer> ids,
+                                  @RequestParam(value = "from", defaultValue = "0") Integer from,
+                                  @RequestParam(value = "size", defaultValue = "10")
+                                  Integer size) {
+        log.info("Get users");
+        return userService.getUsers(ids, from, size);
+    }
     @PostMapping("/categories")
     @ResponseStatus(HttpStatus.CREATED)
     public CategoryDto postCategory(@RequestBody CategoryDto categoryDto) {
@@ -59,7 +66,7 @@ public class AdminController {
     }
 
     @PatchMapping("/categories/{id}")
-    public CategoryDto patchCategory(@PathVariable Integer id, @RequestBody CategoryDto categoryDto) {
+    public CategoryDto updateCategory(@PathVariable Integer id, @RequestBody CategoryDto categoryDto) {
         log.info("Категория Обновлена: {}", categoryDto);
         return categoryService.updateCategory(id, categoryDto);
     }
@@ -72,7 +79,7 @@ public class AdminController {
     }
 
     @PatchMapping("/events/{eventId}")
-    public EventDto patchEvent(@PathVariable Integer eventId, @RequestBody EventDtoRequest eventDtoRequest) {
+    public EventDto updateEvent(@PathVariable Integer eventId, @RequestBody EventDtoRequest eventDtoRequest) {
         return eventService.patchAdminEvent(eventId, eventDtoRequest);
     }
 
@@ -94,7 +101,7 @@ public class AdminController {
     }
 
     @PatchMapping("/compilations/{compId}")
-    public CompilationDto patchCompilation(@PathVariable Integer compId,
+    public CompilationDto updateCompilation(@PathVariable Integer compId,
                                            @RequestBody CompilationDtoRequest compilationDtoRequest) {
         return compilationService.updateCompilation(compId, compilationDtoRequest);
     }

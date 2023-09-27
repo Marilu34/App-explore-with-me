@@ -4,28 +4,17 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.repository.CategoryRepository;
-import ru.practicum.dto.UserRequestDto;
+import ru.practicum.dto.*;
+import ru.practicum.mapper.CommentaryMapper;
+import ru.practicum.model.*;
+import ru.practicum.repository.*;
 import ru.practicum.mapper.EventMapper;
-import ru.practicum.model.Event;
-import ru.practicum.dto.EventDto;
-import ru.practicum.dto.EventDtoRequest;
-import ru.practicum.model.State;
-import ru.practicum.repository.EventRepository;
 import ru.practicum.exception.ConflictException;
-import ru.practicum.exception.ResourceNotFoundException;
+import ru.practicum.exception.NotFoundException;
 import ru.practicum.exception.ValidationException;
 import ru.practicum.mapper.UserRequestMapper;
-import ru.practicum.model.AllUserRequestFormat;
-import ru.practicum.model.AllUserRequestResponse;
-import ru.practicum.model.Status;
-import ru.practicum.model.UserRequest;
-import ru.practicum.repository.UserRequestRepository;
 import ru.practicum.mapper.UserMapper;
 import ru.practicum.services.UserService;
-import ru.practicum.model.User;
-import ru.practicum.dto.UserDto;
-import ru.practicum.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -47,16 +36,8 @@ public class UserServiceDB implements UserService {
 
     private final UserRequestRepository requestRepository;
 
-    @Override
-    public List<UserDto> getUsers(List<Integer> ids, Integer from, Integer size) {
-        List<UserDto> users;
-        if (ids.size() == 1 && ids.get(0) == 0) {
-            users = UserMapper.toUserDtoList(repository.findAll(PageRequest.of(from, size)).toList());
-        } else {
-            users = UserMapper.toUserDtoList(repository.findByIdIn(ids, PageRequest.of(from, size)).toList());
-        }
-        return users;
-    }
+    private final CommentaryRepository commentaryRepository;
+
 
     @Override
     @Transactional
@@ -81,7 +62,7 @@ public class UserServiceDB implements UserService {
     public UserDto updateUser(Integer id, UserDto user) {
         user.setId(id);
         User existsUser = repository.findById(id).orElseThrow(() ->
-                new ResourceNotFoundException("Такого пользователя не существует"));
+                new NotFoundException("Такого пользователя не существует"));
         if (user.getName() != null) {
             existsUser.setName(user.getName());
         }
@@ -95,7 +76,7 @@ public class UserServiceDB implements UserService {
     @Transactional
     public UserDto deleteUser(Integer id) {
         UserDto user = UserMapper.toUserDto(repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Такого пользователя нет!")));
+                .orElseThrow(() -> new NotFoundException("Такого пользователя нет!")));
         repository.deleteById(id);
         return user;
     }
@@ -104,7 +85,7 @@ public class UserServiceDB implements UserService {
     @Transactional
     public EventDto createEventForUser(Integer userId, EventDtoRequest event) {
         if (repository.findById(userId).isEmpty()) {
-            throw new ResourceNotFoundException("Такого пользователя не существует");
+            throw new NotFoundException("Такого пользователя не существует");
         }
         if (event.getDescription() == null || event.getDescription().trim().isEmpty()
                 || event.getDescription().length() < MIN_LENGTH_DESCRIPTION
@@ -135,7 +116,7 @@ public class UserServiceDB implements UserService {
         }
         Event newEvent = EventMapper.toEvent(event, repository.findById(userId).get());
         newEvent.setCategory(categoryRepository.findById(newEvent.getCategory().getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Такой категории не существует!")));
+                .orElseThrow(() -> new NotFoundException("Такой категории не существует!")));
         newEvent.setState(State.PENDING);
         newEvent.setViews(0);
         newEvent.setConfirmedRequests(0);
@@ -143,9 +124,20 @@ public class UserServiceDB implements UserService {
     }
 
     @Override
+    public List<UserDto> getUsers(List<Integer> ids, Integer from, Integer size) {
+        List<UserDto> users;
+        if (ids.size() == 1 && ids.get(0) == 0) {
+            users = UserMapper.toUserDtoList(repository.findAll(PageRequest.of(from, size)).toList());
+        } else {
+            users = UserMapper.toUserDtoList(repository.findByIdIn(ids, PageRequest.of(from, size)).toList());
+        }
+        return users;
+    }
+
+    @Override
     public List<EventDto> getEventsForUser(Integer userId, Integer from, Integer size) {
         if (repository.findById(userId).isEmpty()) {
-            throw new ResourceNotFoundException("Такого пользователя не существует");
+            throw new NotFoundException("Такого пользователя не существует");
         }
         return EventMapper.toEventDtoList(eventRepository.findByInitiator(repository.findById(userId).get(),
                 PageRequest.of(from / size, size)).toList());
@@ -154,10 +146,10 @@ public class UserServiceDB implements UserService {
     @Override
     public EventDto getEventForUser(Integer userId, Integer eventId) {
         if (repository.findById(userId).isEmpty()) {
-            throw new ResourceNotFoundException("Такого пользователя не существует");
+            throw new NotFoundException("Такого пользователя не существует");
         }
         if (eventRepository.findByInitiatorAndId(repository.findById(userId).get(), eventId).isEmpty()) {
-            throw new ResourceNotFoundException("Данный пользователь не создатель события");
+            throw new NotFoundException("Данный пользователь не создатель события");
         }
         return EventMapper.toEventDto(eventRepository.findByInitiatorAndId(repository
                 .findById(userId).get(), eventId).get());
@@ -167,13 +159,13 @@ public class UserServiceDB implements UserService {
     @Transactional
     public EventDto updateEventForOwner(Integer userId, Integer eventId, EventDtoRequest event) {
         if (repository.findById(userId).isEmpty()) {
-            throw new ResourceNotFoundException("Такого пользователя не существует");
+            throw new NotFoundException("Такого пользователя не существует");
         }
         if (eventRepository.findByInitiatorAndId(repository.findById(userId).get(), eventId).isEmpty()) {
             throw new ConflictException("Данный пользователь не создатель события");
         }
         Event newEvent = eventRepository.findById(eventId)
-                .orElseThrow(() -> new ResourceNotFoundException("Такого события нет"));
+                .orElseThrow(() -> new NotFoundException("Такого события нет"));
         if (newEvent.getState().equals(State.PUBLISHED)) {
             throw new ConflictException("Событие уже опубликовано!");
         }
@@ -190,7 +182,7 @@ public class UserServiceDB implements UserService {
         }
         if (event.getCategory() != null) {
             newEvent.setCategory(categoryRepository.findById(event.getCategory())
-                    .orElseThrow(() -> new ResourceNotFoundException("Такой категории не существует")));
+                    .orElseThrow(() -> new NotFoundException("Такой категории не существует")));
         }
         if (event.getDescription() != null) {
             if (event.getDescription() == null || event.getDescription().trim().isEmpty()
@@ -245,22 +237,22 @@ public class UserServiceDB implements UserService {
 
     @Override
     public List<UserRequestDto> getAllRequestsForOwnerEvent(Integer userId, Integer eventId) {
-        if (!eventRepository.findById(eventId).orElseThrow(() -> new ResourceNotFoundException("Такого события нет!"))
+        if (!eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException("Такого события нет!"))
                 .getInitiator().getId().equals(userId)) {
             throw new ValidationException("Посмотреть все запросы может только его создатель!");
         }
         return UserRequestMapper.toRequestDtoList(
                 requestRepository.findAllByEvent(
                         eventRepository.findById(eventId)
-                                .orElseThrow(() -> new ResourceNotFoundException("Такого события нет!"))));
+                                .orElseThrow(() -> new NotFoundException("Такого события нет!"))));
     }
 
     @Override
     @Transactional
-    public AllUserRequestResponse changeStatusRequestForEvent(Integer userId, Integer eventId,
-                                                              AllUserRequestFormat request) {
+    public UserRequestResponse changeStatusRequestForEvent(Integer userId, Integer eventId,
+                                                           UsersRequest request) {
         Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new ResourceNotFoundException("Такого события нет!"));
+                .orElseThrow(() -> new NotFoundException("Такого события нет!"));
         if (!event.getInitiator().getId().equals(userId)) {
             throw new ValidationException("Изменять запросы может только его создатель!");
         }
@@ -270,7 +262,7 @@ public class UserServiceDB implements UserService {
         User requester = null;
         for (Integer id : request.getRequestIds()) {
             UserRequest userRequest = requestRepository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException("Запроса с id " + id + "нет!"));
+                    .orElseThrow(() -> new NotFoundException("Запроса с id " + id + "нет!"));
             if (!userRequest.getStatus().equals(Status.PENDING)) {
                 throw new ConflictException("Заявка уже принята или отклонена!");
             }
@@ -280,7 +272,7 @@ public class UserServiceDB implements UserService {
             event.setConfirmedRequests(event.getConfirmedRequests() + 1);
         }
         eventRepository.save(event);
-        return new AllUserRequestResponse(
+        return new UserRequestResponse(
                 UserRequestMapper.toRequestDtoList(requestRepository.findAllByStatusAndRequester(Status.CONFIRMED,
                         requester)),
                 UserRequestMapper.toRequestDtoList(requestRepository.findAllByStatusAndRequester(Status.REJECTED,
@@ -308,7 +300,7 @@ public class UserServiceDB implements UserService {
             userRequest.setCreated(LocalDateTime.now());
             userRequest.setEvent(event);
             userRequest.setRequester(repository.findById(userId)
-                    .orElseThrow(() -> new ResourceNotFoundException("Такого пользователя не существует!")));
+                    .orElseThrow(() -> new NotFoundException("Такого пользователя не существует!")));
             userRequest.setStatus(Status.CONFIRMED);
             event.setConfirmedRequests(event.getConfirmedRequests() + 1);
             eventRepository.save(event);
@@ -320,7 +312,7 @@ public class UserServiceDB implements UserService {
             userRequest.setCreated(LocalDateTime.now());
             userRequest.setEvent(event);
             userRequest.setRequester(repository.findById(userId)
-                    .orElseThrow(() -> new ResourceNotFoundException("Такого пользователя не существует!")));
+                    .orElseThrow(() -> new NotFoundException("Такого пользователя не существует!")));
             userRequest.setStatus(Status.CONFIRMED);
             event.setConfirmedRequests(event.getConfirmedRequests() + 1);
             eventRepository.save(event);
@@ -332,7 +324,7 @@ public class UserServiceDB implements UserService {
             userRequest.setCreated(LocalDateTime.now());
             userRequest.setEvent(event);
             userRequest.setRequester(repository.findById(userId)
-                    .orElseThrow(() -> new ResourceNotFoundException("Такого пользователя не существует!")));
+                    .orElseThrow(() -> new NotFoundException("Такого пользователя не существует!")));
             userRequest.setStatus(Status.PENDING);
             eventRepository.save(event);
         }
@@ -344,18 +336,18 @@ public class UserServiceDB implements UserService {
         return UserRequestMapper.toRequestDtoList(
                 requestRepository.findAllByRequester(
                         repository.findById(userId)
-                                .orElseThrow(() -> new ResourceNotFoundException("Такого пользователя не существует!"))));
+                                .orElseThrow(() -> new NotFoundException("Такого пользователя не существует!"))));
     }
 
     @Override
     @Transactional
     public UserRequestDto cancelUserRequestForEvent(Integer userId, Integer requestId) {
-        if (!requestRepository.findById(requestId).orElseThrow(() -> new ResourceNotFoundException("Такого запроса нет!"))
+        if (!requestRepository.findById(requestId).orElseThrow(() -> new NotFoundException("Такого запроса нет!"))
                 .getRequester().getId().equals(userId)) {
             throw new ConflictException("Отменить запрос может только его создатель!");
         }
         UserRequest userRequest = requestRepository
-                .findById(requestId).orElseThrow(() -> new ResourceNotFoundException("Такого события нет!"));
+                .findById(requestId).orElseThrow(() -> new NotFoundException("Такого события нет!"));
         userRequest.setStatus(Status.CANCELED);
         return UserRequestMapper.toRequestDto(userRequest);
     }
@@ -378,4 +370,71 @@ public class UserServiceDB implements UserService {
         }
         return true;
     }
+
+    @Override
+    @Transactional
+    public CommentaryDto createComment(Integer userId, Integer eventId, CommentaryDto commentaryDto) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new NotFoundException("Такого события нет!"));
+        User user = repository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Такого пользователя нет!"));
+        if (commentaryDto.getText() == null || commentaryDto.getText().trim().isEmpty()
+                || commentaryDto.getTitle() == null || commentaryDto.getTitle().trim().isEmpty()) {
+            throw new ValidationException("Заголовок, текст не могут быть пустыми!");
+        }
+        if (!isValidCommentary(event.getComments(), userId)) {
+            throw new ValidationException("Пользователь с опубликованным комментарием может " +
+                    "только его изменить");
+        }
+        commentaryDto.setCreated(LocalDateTime.now());
+        commentaryDto.setAuthor(user);
+        Commentary commentary = commentaryRepository.save(CommentaryMapper.toCommentary(commentaryDto));
+        event.getComments().add(commentary);
+        eventRepository.save(event);
+        return CommentaryMapper.toCommentaryDto(commentary);
+    }
+
+    @Override
+    @Transactional
+    public CommentaryDto updateComment(Integer userId, Integer commentId, CommentaryDto commentaryDto) {
+        Commentary commentary = commentaryRepository.findById(commentId)
+                .orElseThrow(() -> new NotFoundException("Такого комментария нет!"));
+        if (!commentary.getAuthor().getId().equals(userId)) {
+            throw new ValidationException("Только создатель комментария может его изменять!");
+        }
+        if (commentaryDto.getText() != null) {
+            if (commentaryDto.getText().trim().isEmpty()) {
+                throw new ValidationException("Текст не может быть пустыми!");
+            }
+            commentary.setText(commentaryDto.getText());
+        }
+        if (commentaryDto.getTitle() != null) {
+            if (commentaryDto.getTitle().trim().isEmpty()) {
+                throw new ValidationException("Заголовок не может быть пустыми!");
+            }
+            commentary.setTitle(commentary.getText());
+        }
+        return CommentaryMapper.toCommentaryDto(commentaryRepository.save(commentary));
+    }
+
+    @Override
+    @Transactional
+    public void deleteComment(Integer userId, Integer commentId) {
+        Commentary commentary = commentaryRepository.findById(commentId)
+                .orElseThrow(() -> new NotFoundException("Такого комментария нет!"));
+        if (!commentary.getAuthor().getId().equals(userId)) {
+            throw new ValidationException("Только создатель комментария может его удалить!");
+        }
+        commentaryRepository.deleteById(commentId);
+    }
+
+    private boolean isValidCommentary(List<Commentary> commentaries, int userId) {
+        for (Commentary comment : commentaries) {
+            if (comment.getAuthor().getId().equals(userId)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 }

@@ -10,7 +10,7 @@ import ru.practicum.dto.CategoryDto;
 import ru.practicum.repository.CategoryRepository;
 import ru.practicum.repository.EventRepository;
 import ru.practicum.exception.ConflictException;
-import ru.practicum.exception.ResourceNotFoundException;
+import ru.practicum.exception.NotFoundException;
 import ru.practicum.exception.ValidationException;
 import ru.practicum.services.CategoryService;
 
@@ -39,7 +39,7 @@ public class CategoryServiceDB implements CategoryService {
     @Transactional
     public CategoryDto deleteCategory(Integer id) {
         if (repository.findById(id).isEmpty()) {
-            throw new ResourceNotFoundException("Такой категории нет!");
+            throw new NotFoundException("Такой категории нет!");
         }
         if (!eventRepository.findByCategory(repository.findById(id).get()).isEmpty()) {
             throw new ConflictException("Категория связанна с событием!");
@@ -53,7 +53,7 @@ public class CategoryServiceDB implements CategoryService {
     @Transactional
     public CategoryDto updateCategory(Integer id, CategoryDto categoryDto) {
         if (repository.findById(id).isEmpty()) {
-            throw new ResourceNotFoundException("Такой категории нет!");
+            throw new NotFoundException("Такой категории нет!");
         }
         if (categoryDto.getName().length() > 50) {
             throw new ValidationException("Имя слишком длинное!");
@@ -71,7 +71,7 @@ public class CategoryServiceDB implements CategoryService {
     @Override
     public CategoryDto getCategory(Integer id) {
         if (repository.findById(id).isEmpty()) {
-            throw new ResourceNotFoundException("Такой категории нет!");
+            throw new NotFoundException("Такой категории нет!");
         }
         return CategoryMapper.toCategoryDto(repository.findById(id).get());
     }

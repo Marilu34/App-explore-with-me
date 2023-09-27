@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -69,4 +70,12 @@ public class Event {
     @OneToOne
     @JoinColumn(name = "initiator", nullable = false)
     private User initiator;
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "event_comments",
+            joinColumns = @JoinColumn(name = "event_id", nullable = false),
+            inverseJoinColumns = @JoinColumn(name = "comment_id", nullable = false)
+    )
+    private List<Commentary> comments;
 }

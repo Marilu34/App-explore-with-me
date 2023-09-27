@@ -15,7 +15,7 @@ import ru.practicum.dto.EventDtoRequest;
 import ru.practicum.model.State;
 import ru.practicum.repository.EventRepository;
 import ru.practicum.exception.ConflictException;
-import ru.practicum.exception.ResourceNotFoundException;
+import ru.practicum.exception.NotFoundException;
 import ru.practicum.exception.ValidationException;
 import ru.practicum.services.EventService;
 import ru.practicum.model.User;
@@ -43,6 +43,26 @@ public class EventServiceDB implements EventService {
     private final UserRepository userRepository;
     private final StatsClient statsClient;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+    @Override
+    public EventDto getEvent(Integer id, HttpServletRequest request) {
+        Event event = repository.findById(id).orElseThrow(() -> new NotFoundException("Такого события нет!"));
+        if (!event.getState().equals(State.PUBLISHED)) {
+            throw new NotFoundException("Такого события нет!");
+        }
+        statsClient.postStatistic(request.getRemoteAddr(), request.getRequestURI(), LocalDateTime.now());
+        try {
+            event.setViews(Math.toIntExact(statsClient.getStatistic(
+                    "2000-09-01 00:00:00",
+                    "2032-09-30 00:00:00",
+                    Collections.singletonList(request.getRequestURI()),
+                    true).get(0).getHits()));
+        } catch (RuntimeException e) {
+            throw new ValidationException("Ошибка:" + e.getMessage());
+        }
+
+        return EventMapper.toEventDto(repository.save(event));
+    }
 
     @Override
     public List<EventDto> getEvents(String text, List<Long> categories, Boolean paid, LocalDateTime start,
@@ -106,25 +126,6 @@ public class EventServiceDB implements EventService {
         }
     }
 
-    @Override
-    public EventDto getEvent(Integer id, HttpServletRequest request) {
-        Event event = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Такого события нет!"));
-        if (!event.getState().equals(State.PUBLISHED)) {
-            throw new ResourceNotFoundException("Такого события нет!");
-        }
-        statsClient.postStatistic(request.getRemoteAddr(), request.getRequestURI(), LocalDateTime.now());
-        try {
-            event.setViews(Math.toIntExact(statsClient.getStatistic(
-                    "2000-09-01 00:00:00",
-                    "2032-09-30 00:00:00",
-                    Collections.singletonList(request.getRequestURI()),
-                    true).get(0).getHits()));
-        } catch (RuntimeException e) {
-            throw new ValidationException("Ошибка:" + e.getMessage());
-        }
-
-        return EventMapper.toEventDto(repository.save(event));
-    }
 
     @Override
     public List<EventDto> getAdminEvents(List<Long> users, List<State> states, List<Long> categories,
