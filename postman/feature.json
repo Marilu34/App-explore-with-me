@@ -81,10 +81,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"title\": \"Событие\",\r\n    \"text\": \"Хочу посетить не один - ищу компанию\"\r\n}"
+							"raw": "{\r\n    \"title\": \"Замечательное мероприятие\",\r\n    \"text\": \"Ищу компанию, желательно девчонки))) 20-27 лет\"\r\n}"
 						},
 						"url": {
-							"raw": "{{localhost}}/users/3/events/113/comments",
+							"raw": "{{localhost}}/users/3/events/105/comments",
 							"host": [
 								"{{localhost}}"
 							],
@@ -92,57 +92,7 @@
 								"users",
 								"3",
 								"events",
-											"113",
-								"comments"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "CreateWrongComment",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"// Проверка статуса ответа\r",
-									"pm.test(\"Status code is 400\", function () {\r",
-									"    pm.response.to.have.status(400);\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							},
-							{
-								"key": "Accept",
-								"value": "*/*",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"title\": \"Событие\",\r\n    \"text\": \"Хочу посетить не один - ищу компанию\"\r\n}"
-						},
-						"url": {
-							"raw": "{{localhost}}/users/3/events/113/comments",
-							"host": [
-								"{{localhost}}"
-							],
-							"path": [
-								"users",
-								"3",
-								"events",
-								"113",
+								"105",
 								"comments"
 							]
 						}
@@ -185,7 +135,7 @@
 									"\r",
 									"// Проверка значений некоторых полей\r",
 									"pm.test(\"Check specific field values\", function () {\r",
-									"    pm.expect(jsonResponse.id).to.eql(113);\r",
+									"    pm.expect(jsonResponse.id).to.eql(105);\r",
 									"});\r",
 									"\r",
 									"pm.test(\"Check comments array content\", function () {\r",
@@ -202,8 +152,8 @@
 									"    // Проверка значений полей первого комментария\r",
 									"    pm.expect(firstComment.id).to.eql(1);\r",
 									"    pm.expect(firstComment.author.id).to.eql(3);\r",
-									"    pm.expect(firstComment.title).to.eql(\"Событие\");\r",
-									"    pm.expect(firstComment.text).to.eql(\"Хочу посетить не один - ищу компанию\");\r",
+									"    pm.expect(firstComment.title).to.eql(\"Замечательное мероприятие\");\r",
+									"    pm.expect(firstComment.text).to.eql(\"Ищу компанию, желательно девчонки))) 20-27 лет\");\r",
 									"});"
 								],
 								"type": "text/javascript"
@@ -232,13 +182,63 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{localhost}}/events/113",
+							"raw": "{{localhost}}/events/105",
 							"host": [
 								"{{localhost}}"
 							],
 							"path": [
 								"events",
-								"113"
+								"105"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateWrongComment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Проверка статуса ответа\r",
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "*/*",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Замечательное мероприятие\",\r\n    \"text\": \"Ищу компанию, желательно девчонки))) 20-27 лет\"\r\n}"
+						},
+						"url": {
+							"raw": "{{localhost}}/users/3/events/105/comments",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"users",
+								"3",
+								"events",
+								"105",
+								"comments"
 							]
 						}
 					},
@@ -316,10 +316,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"title\": \"Лайк! Хочу исчо\",\r\n    \"text\": \"Приходите,и Вам понравится\"\r\n}"
+							"raw": "{\r\n    \"title\": \"Отлично! Люблю саппы!!!!\",\r\n    \"text\": \"Погнали все, новичкам не трудно научиться будет, а профессионалам показать свои умения\"\r\n}"
 						},
 						"url": {
-							"raw": "{{localhost}}/users/5/events/113/comments",
+							"raw": "{{localhost}}/users/5/events/105/comments",
 							"host": [
 								"{{localhost}}"
 							],
@@ -327,7 +327,7 @@
 								"users",
 								"5",
 								"events",
-								"113",
+								"105",
 								"comments"
 							]
 						}
@@ -406,7 +406,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"title\": \"Событие понравилось очень\",\r\n    \"text\": \"Приду исчо\"\r\n}"
+							"raw": "{\r\n    \"title\": \"Замечательное мероприятие!!\",\r\n    \"text\": \"Всем спорт, мир, труд, май, дружба, жвачка!\"\r\n}"
 						},
 						"url": {
 							"raw": "{{localhost}}/users/3/comments/1",
@@ -495,10 +495,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"title\": \"Событие понравилось\",\r\n    \"text\": \"Событие понравилось.Лайк\"\r\n}"
+							"raw": "{\r\n    \"title\": \"Мероприятие лучшее!\",\r\n    \"text\": \"Мероприятие доставит много положительных эмоций, его инициатор, очень крутой!!!\"\r\n}"
 						},
 						"url": {
-							"raw": "{{localhost}}/users/1/events/113/comments",
+							"raw": "{{localhost}}/users/1/events/105/comments",
 							"host": [
 								"{{localhost}}"
 							],
@@ -506,7 +506,7 @@
 								"users",
 								"1",
 								"events",
-								"113",
+								"105",
 								"comments"
 							]
 						}
@@ -594,7 +594,7 @@
 									"\r",
 									"// Проверка значений некоторых полей\r",
 									"pm.test(\"Check specific field values\", function () {\r",
-									"    pm.expect(jsonResponse.id).to.eql(113);\r",
+									"    pm.expect(jsonResponse.id).to.eql(105);\r",
 									"    pm.expect(jsonResponse.comments.length).to.eql(2);\r",
 									"});"
 								],
@@ -624,13 +624,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{localhost}}/events/113",
+							"raw": "{{localhost}}/events/105",
 							"host": [
 								"{{localhost}}"
 							],
 							"path": [
 								"events",
-								"113"
+								"105"
 							]
 						}
 					},
